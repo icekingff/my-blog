@@ -1,23 +1,410 @@
-/**
- * CSS files with the .module.css suffix will be treated as CSS modules
- * and scoped locally.
- */
-
+/* ===== 浅色模式 ===== */
 .heroBanner {
-  padding: 4rem 0;
+  padding: 6rem 0;
   text-align: center;
   position: relative;
   overflow: hidden;
+  min-height: 70vh;
+  display: flex;
+  align-items: center;
+  
+  background-image: url('/img/fff.png');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
 }
 
-@media screen and (max-width: 996px) {
-  .heroBanner {
-    padding: 2rem;
-  }
+/* 浅色模式遮罩 */
+.heroBanner::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(13, 27, 42, 0.3) 0%,
+    rgba(79, 195, 247, 0.1) 50%,
+    rgba(13, 27, 42, 0.5) 100%
+  );
+  z-index: 0;
 }
 
+.heroBanner .container {
+  position: relative;
+  z-index: 10;
+}
+
+/* ===== 深色模式 ===== */
+[data-theme='dark'] .heroBanner {
+  background-image: url('/img/ff-dark.jpg');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+}
+
+[data-theme='dark'] .heroBanner::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(13, 27, 42, 0.3) 0%,
+    rgba(79, 195, 247, 0.1) 50%,
+    rgba(13, 27, 42, 0.5) 100%
+  );
+  z-index: 0;
+}
+
+[data-theme='dark'] .heroBanner .container {
+  position: relative;
+  z-index: 10;
+}
+
+/* ===== 水神之冠 ===== */
+.crownEmoji {
+  font-size: 4rem;
+  display: block;
+  margin-bottom: 1rem;
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px) rotate(-3deg); }
+  50% { transform: translateY(-15px) rotate(3deg); }
+}
+
+/* ===== 标题 ===== */
+.heroTitle {
+  font-size: 3.5rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, #4fc3f7 0%, #1a8bc0 40%, #e1f5fe 75%, #ffffff 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-shadow: none;
+  filter: drop-shadow(0 4px 20px rgba(79, 195, 247, 0.25));
+  animation: titleGlow 3s ease-in-out infinite;
+}
+
+@keyframes titleGlow {
+  0%, 100% { filter: drop-shadow(0 4px 20px rgba(79, 195, 247, 0.25)); }
+  50% { filter: drop-shadow(0 4px 45px rgba(79, 195, 247, 0.5)); }
+}
+
+[data-theme='dark'] .heroTitle {
+  color: #b3e5fc;
+  animation: titleGlowDark 3s ease-in-out infinite;
+}
+
+@keyframes titleGlowDark {
+  0%, 100% { filter: drop-shadow(0 4px 20px rgba(77, 208, 225, 0.15)); }
+  50% { filter: drop-shadow(0 4px 45px rgba(77, 208, 225, 0.35)); }
+}
+
+/* ===== 罪字特殊样式 ===== */
+.sinnerText {
+  color: #d32f2f;
+  position: relative;
+  display: inline-block;
+  text-shadow: 0 0 30px rgba(211, 47, 47, 0.2);
+}
+
+[data-theme='dark'] .sinnerText {
+  color: #ff6b6b;
+  text-shadow: 0 0 40px rgba(255, 107, 107, 0.3);
+}
+
+/* ===== 副标题 ===== */
+.heroSubtitle {
+  font-size: 1.3rem;
+  font-weight: 300;
+  color: #d4e8f5;
+  font-style: italic;
+  margin-top: 0.5rem;
+  opacity: 0.9;
+  letter-spacing: 3px;
+  text-shadow: 0 2px 20px rgba(79, 195, 247, 0.1);
+}
+
+[data-theme='dark'] .heroSubtitle {
+  color: #039be5;
+}
+
+/* ===== 按钮 ===== */
 .buttons {
   display: flex;
   align-items: center;
   justify-content: center;
+  gap: 1.5rem;
+  margin-top: 2rem;
+  position: relative;
+  z-index: 20;
+}
+
+.buttons :global(.button--primary) {
+  background: linear-gradient(135deg, #4fc3f7, #0288d1);
+  border: none;
+  color: #fff;
+  font-weight: 600;
+  padding: 0.8rem 2.5rem;
+  border-radius: 50px;
+  box-shadow: 0 8px 25px rgba(2, 136, 209, 0.35);
+  transition: all 0.3s ease;
+  animation: btnPulse 2.5s ease-in-out infinite;
+}
+
+@keyframes btnPulse {
+  0%, 100% { box-shadow: 0 8px 25px rgba(2, 136, 209, 0.35); }
+  50% { box-shadow: 0 8px 45px rgba(2, 136, 209, 0.6), 0 0 70px rgba(79, 195, 247, 0.15); }
+}
+
+.buttons :global(.button--primary):hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 35px rgba(2, 136, 209, 0.5);
+  animation-play-state: paused;
+}
+
+.buttons :global(.button--secondary) {
+  background: rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(10px);
+  border: 2px solid #0288d1;
+  color: #0d47a1;
+  font-weight: 600;
+  padding: 0.8rem 2.5rem;
+  border-radius: 50px;
+  transition: all 0.3s ease;
+}
+
+[data-theme='dark'] .buttons :global(.button--secondary) {
+  background: rgba(255, 255, 255, 0.1);
+  color: #b3e5fc;
+  border-color: #4dd0e1;
+}
+
+.buttons :global(.button--secondary):hover {
+  transform: translateY(-3px);
+  background: rgba(79, 195, 247, 0.2);
+}
+
+/* ===== 特色区块 ===== */
+.features {
+  display: flex;
+  align-items: center;
+  padding: 4rem 0;
+  width: 100%;
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(5px);
+}
+
+[data-theme='dark'] .features {
+  background: rgba(13, 27, 42, 0.8);
+}
+
+.feature {
+  text-align: center;
+  padding: 2rem 1rem;
+}
+
+.featureIcon {
+  font-size: 3.5rem;
+  margin-bottom: 1rem;
+}
+
+.featureTitle {
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: #0d47a1;
+  margin-bottom: 0.5rem;
+}
+
+[data-theme='dark'] .featureTitle {
+  color: #b3e5fc;
+}
+
+.featureDesc {
+  color: #37474f;
+  line-height: 1.8;
+}
+
+[data-theme='dark'] .featureDesc {
+  color: #b0bec5;
+}
+
+/* ===== 芙宁娜专属引语区块 ===== */
+.furinaSection {
+  padding: 4rem 0;
+  background: linear-gradient(180deg, #e3f2fd 0%, #bbdefb 100%);
+  text-align: center;
+}
+
+[data-theme='dark'] .furinaSection {
+  background: linear-gradient(180deg, #0d1b2a 0%, #1a3a5c 100%);
+}
+
+.furinaQuote {
+  font-size: 2rem;
+  line-height: 1.8;
+  color: #0d47a1;
+  font-style: italic;
+  padding: 2rem;
+  max-width: 800px;
+  margin: 0 auto;
+  position: relative;
+}
+
+[data-theme='dark'] .furinaQuote {
+  color: #b3e5fc;
+}
+
+.quoteMark {
+  font-size: 4rem;
+  color: #4fc3f7;
+  opacity: 0.5;
+  display: inline-block;
+}
+
+.quoteAuthor {
+  margin-top: 1.5rem;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #0288d1;
+  font-style: normal;
+  letter-spacing: 2px;
+}
+
+[data-theme='dark'] .quoteAuthor {
+  color: #4dd0e1;
+}
+
+/* ===== 浮动光点特效 ===== */
+.heroBanner::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 0;
+  background: 
+    radial-gradient(3px 3px at 15% 25%, rgba(79, 195, 247, 0.9), transparent 50px),
+    radial-gradient(3px 3px at 35% 65%, rgba(79, 195, 247, 0.7), transparent 50px),
+    radial-gradient(2px 2px at 55% 15%, rgba(79, 195, 247, 0.8), transparent 40px),
+    radial-gradient(3px 3px at 75% 55%, rgba(79, 195, 247, 0.6), transparent 50px),
+    radial-gradient(4px 4px at 10% 75%, rgba(255, 255, 255, 0.7), transparent 60px),
+    radial-gradient(2px 2px at 90% 10%, rgba(79, 195, 247, 0.5), transparent 40px),
+    radial-gradient(3px 3px at 45% 45%, rgba(255, 255, 255, 0.4), transparent 50px),
+    radial-gradient(4px 4px at 65% 85%, rgba(79, 195, 247, 0.6), transparent 60px),
+    radial-gradient(2px 2px at 25% 10%, rgba(255, 255, 255, 0.5), transparent 40px),
+    radial-gradient(3px 3px at 85% 35%, rgba(79, 195, 247, 0.7), transparent 50px);
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  pointer-events: none;
+  animation: sparkleFloat 6s ease-in-out infinite;
+}
+
+@keyframes sparkleFloat {
+  0%, 100% { opacity: 0.5; transform: scale(1); }
+  25% { opacity: 1; transform: scale(1.06); }
+  50% { opacity: 0.3; transform: scale(0.94); }
+  75% { opacity: 0.7; transform: scale(1.03); }
+}
+
+[data-theme='dark'] .heroBanner::before {
+  background: 
+    radial-gradient(3px 3px at 15% 25%, rgba(77, 208, 225, 0.7), transparent 50px),
+    radial-gradient(3px 3px at 35% 65%, rgba(77, 208, 225, 0.5), transparent 50px),
+    radial-gradient(2px 2px at 55% 15%, rgba(77, 208, 225, 0.6), transparent 40px),
+    radial-gradient(3px 3px at 75% 55%, rgba(77, 208, 225, 0.4), transparent 50px),
+    radial-gradient(4px 4px at 10% 75%, rgba(255, 255, 255, 0.5), transparent 60px),
+    radial-gradient(2px 2px at 90% 10%, rgba(77, 208, 225, 0.4), transparent 40px),
+    radial-gradient(3px 3px at 45% 45%, rgba(255, 255, 255, 0.3), transparent 50px),
+    radial-gradient(4px 4px at 65% 85%, rgba(77, 208, 225, 0.5), transparent 60px),
+    radial-gradient(2px 2px at 25% 10%, rgba(255, 255, 255, 0.4), transparent 40px),
+    radial-gradient(3px 3px at 85% 35%, rgba(77, 208, 225, 0.6), transparent 50px);
+}
+
+/* ===== 水波纹装饰 ===== */
+.waveDecoration {
+  display: block;
+  position: absolute;
+  bottom: 20px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  color: rgba(79, 195, 247, 0.12);
+  font-size: 1.8rem;
+  letter-spacing: 15px;
+  animation: waveMove 4s ease-in-out infinite;
+  z-index: 1;
+  pointer-events: none;
+}
+
+@keyframes waveMove {
+  0%, 100% { opacity: 0.12; transform: scaleX(1); }
+  50% { opacity: 0.25; transform: scaleX(1.15); }
+}
+
+[data-theme='dark'] .waveDecoration {
+  color: rgba(77, 208, 225, 0.08);
+}
+
+/* ===== 轻微互动特效 ===== */
+
+/* 卡片轻微上浮 */
+.feature {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.feature:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 8px 30px rgba(79, 195, 247, 0.1);
+}
+
+[data-theme='dark'] .feature:hover {
+  box-shadow: 0 8px 30px rgba(77, 208, 225, 0.08);
+}
+
+/* 皇冠轻微放大 */
+.crownEmoji {
+  transition: transform 0.4s ease, filter 0.4s ease;
+  cursor: pointer;
+}
+
+.crownEmoji:hover {
+  transform: scale(1.1) rotate(5deg);
+  filter: drop-shadow(0 4px 25px rgba(79, 195, 247, 0.3));
+}
+
+/* 引用区块轻微发光 */
+.furinaQuote {
+  transition: box-shadow 0.4s ease, transform 0.4s ease;
+  border-radius: 16px;
+  padding: 2rem;
+}
+
+.furinaQuote:hover {
+  box-shadow: 0 4px 30px rgba(79, 195, 247, 0.06);
+}
+
+[data-theme='dark'] .furinaQuote:hover {
+  box-shadow: 0 4px 30px rgba(77, 208, 225, 0.05);
+}
+
+/* 标题悬浮 */
+.heroTitle {
+  transition: filter 0.4s ease;
+  cursor: default;
+}
+
+.heroTitle:hover {
+  filter: drop-shadow(0 4px 40px rgba(79, 195, 247, 0.4));
+}
+
+[data-theme='dark'] .heroTitle:hover {
+  filter: drop-shadow(0 4px 40px rgba(77, 208, 225, 0.3));
 }
