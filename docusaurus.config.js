@@ -7,9 +7,9 @@ import rehypeKatex from 'rehype-katex';
 /** @type {import('@docusaurus/types').Config} */
 const config = {
   // 网站基本信息
-  title: '我的网站',
-  tagline: '一个简洁、实用的中文知识网站',
-  favicon: 'img/favicon.ico',
+  title: 'iceking的blog',
+  tagline: '一个芙宁娜单推人的blog网站',
+  favicon: 'img/ff-dark.jpg',
 
   // 网站语言设置
   i18n: {
