@@ -2,6 +2,7 @@
 title: (COCI 2023/2024 5) Trokut
 date: 2026-8-25
 ---
+{/* truncate */}
 ## 题解
 ### 题意
 给定一个$n$边形，$Lucija，Ivan$进行一种游戏，从$Lucija$开始轮流进行。

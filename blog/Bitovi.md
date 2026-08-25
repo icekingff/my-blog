@@ -2,6 +2,7 @@
 title: (COCI 2023/2024 5) Bitovi
 date: 2026-8-25
 ---
+{/* truncate */}
 ## 题解
 ### 题意
 给定两个集合$A,B$，存在一种操作,选择两个数$x,y$要求
@@ -11,8 +12,6 @@ $x \leq 2^{15},y \leq 2^{15},x \in A,y \notin A$且$x \bigotimes y$的二进制�
 
 范围：$$|A| \leq 2^{15}$$
 $$|B| \leq 2^{15}$$
-
-{/* truncate */}
 
 ### 解法
 简单构造题

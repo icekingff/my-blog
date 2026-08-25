@@ -2,6 +2,7 @@
 title: (COCI 2023/2024 5) Piratski kod
 date: 2026-8-25
 ---
+{/* truncate */}
 ## 题解
 ### 题意
 给定一个长度$n$，分别求每一个长度为$k(k \leq n)$的所有可能的二进制序列的权值总和。
@@ -19,7 +20,6 @@ $$\sum_{i=1}^{k-1} s_i \cdot fib_{i+1}$$
 $fib_1=1,fib_2=1,fib_i=fib_{i-1}+fib_{i-2}(i > 2)$
 </details>
 那么该二进制串的权值为，分割后含连续$1$的子串的权值和
-{/* truncate */}
 
 范围：$n \leq 5000$
 ### 解法
