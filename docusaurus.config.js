@@ -134,74 +134,59 @@ const config = {
       },
 
       // 顶部导航栏
+      // 在 navbar 部分
       navbar: {
-        title: '我的网站',
+        title: '🌊 iceking的blog',
         logo: {
-          alt: '我的网站 Logo',
-          src: 'img/logo.svg',
+        alt: ' ',
+        src: 'img/ff (8).png',  // ← 改成你的图片路径
+        srcDark: 'img/ff (11).png',  // ← 深色模式 Logo（可选）
+        width: 32,   // 宽度（可选）
+        height: 32,  // 高度（可选）
         },
         items: [
           {
             type: 'docSidebar',
             sidebarId: 'tutorialSidebar',
             position: 'left',
-            label: '文档教程',
+            label: '📜 笔记本',
           },
+          {to: '/blog', label: '📖 blog', position: 'left'},
           {
-            to: '/blog',
-            label: '博客',
-            position: 'left',
-          },
-          {
-            to: '/docs/intro',
-            label: '开始使用',
-            position: 'left',
-          },
-          {
-            href: 'https://github.com/你的用户名/你的仓库名',
-            label: '源代码',
+            href: 'https://github.com/your-repo',
+            label: '⚖️ 源代码',
             position: 'right',
           },
         ],
       },
 
-      // 底部页脚
+      // 在 footer 部分
       footer: {
         style: 'dark',
         links: [
           {
-            title: '文档',
+            title: '水之审判',
             items: [
-              {
-                label: '教程首页',
-                to: '/docs/intro',
-              },
+              {label: '审判庭首页', to: '/docs/intro'},
+              {label: '法典汇编', to: '/docs/guides'},
             ],
           },
           {
-            title: '学习资源',
+            title: '歌剧艺术',
             items: [
-              {
-                label: '博客文章',
-                to: '/blog',
-              },
-              {
-                label: '开始使用',
-                to: '/docs/intro',
-              },
+              {label: '博客文章', to: '/blog'},
+              {label: '枫丹闲谈', to: '/blog/tags/生活'},
             ],
           },
           {
-            title: '相关链接',
+            title: '海露链接',
             items: [
-              {
-                label: 'GitHub 项目',
-                href: 'https://github.com/你的用户名/你的仓库名',
-              },
+              {label: 'GitHub', href: 'https://github.com/your-repo'},
+              {label: '原神官网', href: 'https://genshin.hoyoverse.com/zh-CN/'},
             ],
           },
         ],
-        copyright: `版权所有 © ${new Date().getFullYear()} 我的网站。使用 Docusaurus 构建。`,
+        copyright: `⚜️ 版权所有 © ${new Date().getFullYear()} 芙宁娜·德·枫丹。以水神之名，建于Docusaurus之上。`,
       },
 
       // 代码高亮主题
