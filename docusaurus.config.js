@@ -168,14 +168,12 @@ const config = {
             title: '水之审判',
             items: [
               {label: '审判庭首页', to: '/docs/intro'},
-              {label: '法典汇编', to: '/docs/guides'},
             ],
           },
           {
             title: '歌剧艺术',
             items: [
               {label: '博客文章', to: '/blog'},
-              {label: '枫丹闲谈', to: '/blog/tags/生活'},
             ],
           },
           {
