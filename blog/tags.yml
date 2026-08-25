@@ -17,3 +17,31 @@ hola:
   label: Hola
   permalink: /hola
   description: Hola tag description
+
+博弈论:
+  label: '博弈论'
+  permalink: '/boyilun'
+
+题解:
+  label: '题解'
+  permalink: '/tj'
+
+COCI:
+  label: 'COCI'
+  permalink: '/coci'
+
+贪心:
+  label: '贪心'
+  permalink: '/tanxin'
+
+构造:
+  label: '构造'
+  permalink: '/gouzao'
+
+动态规划DP:
+  label: '动态规划DP'
+  permalink: '/dongtaiguihua'
+
+组合数学:
+  label: '组合数学'
+  permalink: '/组合数学'

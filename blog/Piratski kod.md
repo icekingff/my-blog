@@ -1,6 +1,7 @@
 ---
 title: (COCI 2023/2024 5) Piratski kod
 date: 2026-8-25
+tags: [动态规划DP,组合数学,题解,COCI]
 ---
 {/* truncate */}
 ## 题解

@@ -1,6 +1,7 @@
 ---
 title: (COCI 2023/2024 5) Trokut
 date: 2026-8-25
+tags: [博弈论, 题解, COCI]
 ---
 {/* truncate */}
 ## 题解
