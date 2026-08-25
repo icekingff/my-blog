@@ -162,7 +162,7 @@ const config = {
 
       // 在 footer 部分
       footer: {
-        style: 'dark',
+        style: 'dark', 
         links: [
           {
             title: '水之审判',
