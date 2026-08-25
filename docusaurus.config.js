@@ -189,7 +189,7 @@ const config = {
         copyright: `⚜️ 版权所有 © ${new Date().getFullYear()} 芙宁娜·德·枫丹。以水神之名，建于Docusaurus之上。`,
       },
 
-      // 代码高亮主题
+      // 代码高亮主题 
       prism: {
         theme: prismThemes.github,
         darkTheme: prismThemes.dracula,
