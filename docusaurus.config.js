@@ -180,7 +180,8 @@ const config = {
             title: '海露链接',
             items: [
               {label: 'GitHub', href: 'https://github.com/your-repo'},
-              {label: '原神官网', href: 'https://genshin.hoyoverse.com/zh-CN/'},
+              {label: '原神官网', href: 'https://ys.mihoyo.com/'},
+              {label: '哒哒哒哒哒', href: 'https://ys.mihoyo.com/cloud/#/'},
             ],
           },
         ],
