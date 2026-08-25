@@ -139,8 +139,8 @@ const config = {
         title: '🌊 iceking的blog',
         logo: {
         alt: ' ',
-        src: 'img/ff (8).png',  // ← 改成你的图片路径
-        srcDark: 'img/ff (11).png',  // ← 深色模式 Logo（可选）
+        src: 'img/ffday.png',  // ← 改成你的图片路径
+        srcDark: 'img/ffnight.png',  // ← 深色模式 Logo（可选）
         width: 32,   // 宽度（可选）
         height: 32,  // 高度（可选）
         },
