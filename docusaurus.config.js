@@ -9,7 +9,7 @@ const config = {
   // 网站基本信息
   title: 'iceking的blog',
   tagline: '一个芙宁娜单推人的blog网站',
-  favicon: 'img/ffnight.png',
+  favicon: 'img/touxiang.jpg',
 
   // 网站语言设置
   i18n: {
