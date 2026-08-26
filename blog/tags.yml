@@ -74,8 +74,8 @@ NOI/NOI+/CTS:
 状态压缩:
   label: '状态压缩'
 
-字典树Tire:
-  label: '字典树Tire'
+字典树Trie:
+  label: '字典树Trie'
 
 树形DP:
   label: '树形DP'

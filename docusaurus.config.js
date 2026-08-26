@@ -135,7 +135,7 @@ const config = {
       // 顶部导航栏
       // 在 navbar 部分
       navbar: {
-        title: '🌊 iceking的blog',
+        title: '🌊 主页',
         logo: {
         alt: ' ',
         src: 'img/ffday.png',  // ← 改成你的图片路径
