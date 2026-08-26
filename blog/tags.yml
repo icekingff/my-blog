@@ -45,3 +45,38 @@ COCI:
 组合数学:
   label: '组合数学'
   permalink: '/组合数学'
+
+入门:
+  label: '入门'
+
+普及-:
+  label: '普及-'
+  permalink: 'pujijian'
+
+普及:
+  label: '普及'
+
+普及+/提高-:
+  label: '普及+/提高-'
+
+提高:
+  label: '提高'
+
+提高+/省选-:
+  label: '提高+/省选-'
+
+省选+/NOI-:
+  label: '省选+/NOI-'
+
+NOI/NOI+/CTS:
+  label: 'NOI/NOI+/CTS'
+
+状态压缩:
+  label: '状态压缩'
+
+字典树Tire:
+  label: '字典树Tire'
+
+树形DP:
+  label: '树形DP'
+

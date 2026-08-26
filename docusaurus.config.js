@@ -78,7 +78,6 @@ const config = {
 
           showReadingTime: true,
           showLastUpdateTime: true,
-
           feedOptions: {
             type: ['rss', 'atom'],
             xslt: true,
@@ -91,7 +90,7 @@ const config = {
           // 没有摘要分隔符时给出提醒
           onInlineTags: 'warn',
           onInlineAuthors: 'warn',
-          onUntruncatedBlogPosts: 'warn',
+          onUntruncatedBlogPosts: 'ignore',
         },
 
         theme: {

@@ -1,7 +1,7 @@
 ---
 title: (COCI 2023/2024 5) Rolete
 date: 2026-8-25
-tags: [贪心, 题解, COCI]
+tags: [贪心, 题解, COCI, 提高]
 ---
 {/* truncate */}
 ## 题解

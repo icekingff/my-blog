@@ -1,7 +1,7 @@
 ---
 title: (COCI 2023/2024 5) Bitovi
 date: 2026-8-25
-tags: [构造,题解,COCI]
+tags: [构造,题解,COCI,普及+/提高-]
 ---
 {/* truncate */}
 ## 题解
