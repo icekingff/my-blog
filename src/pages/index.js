@@ -4,6 +4,8 @@ import Link from '@docusaurus/Link';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import Layout from '@theme/Layout';
 import styles from './index.module.css';
+import WaterTrail from '@site/src/components/WaterTrail';
+import ClickEffect from '@site/src/components/ClickEffect';
 
 // 主页英雄区（Hero）
 function HomepageHeader() {
@@ -118,6 +120,8 @@ export default function Home() {
     <Layout
       title="iceking的blog"
       description="一个芙宁娜单推人的blog网站">
+      <WaterTrail /> 
+      <ClickEffect />
       <HomepageHeader />
       <main>
         <section className={styles.features}>
