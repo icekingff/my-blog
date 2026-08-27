@@ -78,7 +78,7 @@ const config = {
 
           showReadingTime: true,
           showLastUpdateTime: true,
-          blogSidebarGroupByYear: true,
+          // blogSidebarGroupByYear: true,
           blogSidebarTitle: '📚 所有文章',
           blogSidebarCount: 'ALL',  // 显示所有文章
           feedOptions: {
