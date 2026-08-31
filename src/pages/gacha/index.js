@@ -111,11 +111,12 @@ export default function GachaPage() {
   const [showHistory, setShowHistory] = useState(false);
   
   // ===== 保底相关状态 =====
-  const [pityCounter, setPityCounter] = useState(0);
+  const [pityCounter, setPityCounter] = useState(0);           // 五星保底计数
   const [totalPulls, setTotalPulls] = useState(0);
+  const [pullsSinceFiveStar, setPullsSinceFiveStar] = useState(0); // 出金后计数
   
-  // ===== 出金后20抽计数器 =====
-  const [pullsSinceFiveStar, setPullsSinceFiveStar] = useState(0);
+  // ===== 四星保底状态（独立） =====
+  const [fourStarPityCounter, setFourStarPityCounter] = useState(0);
   
   // ===== 十连相关状态 =====
   const [isTenPull, setIsTenPull] = useState(false);
@@ -134,7 +135,11 @@ export default function GachaPage() {
   const HARD_PITY = 80;                    // 硬保底：80抽必出五星
   const SOFT_PITY_START = 73;              // 软保底开始：73抽后概率提升
   const SOFT_PITY_INCREASE = 6;            // 软保底每抽增加 6%
-  const FOUR_STAR_PITY = 10;               // 四星保底：10抽必出四星或以上
+  const FOUR_STAR_HARD_PITY = 10;          // 四星硬保底：10抽必出四星
+  
+  // ===== 出金后20抽内概率加成 =====
+  const RECENT_FIVE_STAR_BONUS_RATE = 0.3;   // 额外加成概率 0.3%
+  const RECENT_FIVE_STAR_WINDOW = 20;        // 加成持续20抽
 
   // ===== 计算实际五星概率 =====
   const getFiveStarRate = (pity, pullsSinceFive) => {
@@ -265,45 +270,44 @@ export default function GachaPage() {
     }
   };
 
-  // ===== 单抽逻辑 =====
+  // ===== 单抽逻辑（含独立四星保底） =====
   const drawCard = () => {
     if (isDrawing) return;
     setIsDrawing(true);
     setIsTenPull(false);
     setTenPullResults([]);
 
-    // 计算当前实际概率
     const fiveStarRate = getFiveStarRate(pityCounter, pullsSinceFiveStar);
     const roll = Math.random() * 100;
     
     let starLevel;
     
-    // 判断五星
+    // 1. 判断五星
     if (roll < fiveStarRate || pityCounter >= HARD_PITY) {
       starLevel = 5;
       setPullsSinceFiveStar(0);
+      setPityCounter(0);
+      setFourStarPityCounter(0);  // ✅ 出金重置四星保底
     } else {
+      // 未出金，五星保底+1
+      setPityCounter(prev => prev + 1);
       setPullsSinceFiveStar(prev => prev + 1);
       
-      // 四星保底逻辑
-      const fourStarPity = (pityCounter + pullsSinceFiveStar) % FOUR_STAR_PITY;
-      const isFourStarGuaranteed = fourStarPity === 9;
+      // 2. 判断四星（独立四星保底）
+      const isFourStarGuaranteed = fourStarPityCounter >= FOUR_STAR_HARD_PITY - 1;
       
       if (isFourStarGuaranteed) {
         starLevel = 4;
+        setFourStarPityCounter(0);  // ✅ 出四星重置四星保底
       } else if (roll < fiveStarRate + FOUR_STAR_BASE_RATE) {
         starLevel = 4;
+        setFourStarPityCounter(0);  // ✅ 出四星重置四星保底
       } else {
         starLevel = 3;
+        setFourStarPityCounter(prev => prev + 1);  // ✅ 未出四星，计数+1
       }
     }
 
-    // 更新保底计数
-    if (starLevel === 5) {
-      setPityCounter(0);
-    } else {
-      setPityCounter(prev => prev + 1);
-    }
     setTotalPulls(prev => prev + 1);
 
     // 从对应星级卡池抽取
@@ -341,7 +345,7 @@ export default function GachaPage() {
     }, 2500);
   };
 
-  // ===== 十连抽逻辑 =====
+  // ===== 十连抽逻辑（含独立四星保底） =====
   const drawTenCards = () => {
     if (isDrawing) return;
     setIsDrawing(true);
@@ -350,9 +354,9 @@ export default function GachaPage() {
     const results = [];
     let pity = pityCounter;
     let pullsSinceFive = pullsSinceFiveStar;
+    let fourStarPity = fourStarPityCounter;
     let fiveStarCount = 0;
     let fourStarCount = 0;
-    let fourStarPityCounter = 0;
 
     for (let i = 0; i < 10; i++) {
       const fiveStarRate = getFiveStarRate(pity, pullsSinceFive);
@@ -360,28 +364,31 @@ export default function GachaPage() {
       
       let starLevel;
       
+      // 1. 判断五星
       if (roll < fiveStarRate || pity >= HARD_PITY) {
         starLevel = 5;
         fiveStarCount++;
         pity = 0;
         pullsSinceFive = 0;
-        fourStarPityCounter = 0;
+        fourStarPity = 0;  // ✅ 出金重置四星保底
       } else {
+        pity++;
         pullsSinceFive++;
         
-        const isFourStarGuaranteed = fourStarPityCounter >= 9;
+        // 2. 判断四星（独立四星保底）
+        const isFourStarGuaranteed = fourStarPity >= FOUR_STAR_HARD_PITY - 1;
+        
         if (isFourStarGuaranteed) {
           starLevel = 4;
           fourStarCount++;
-          fourStarPityCounter = 0;
+          fourStarPity = 0;  // ✅ 出四星重置四星保底
         } else if (roll < fiveStarRate + FOUR_STAR_BASE_RATE) {
           starLevel = 4;
           fourStarCount++;
-          fourStarPityCounter = 0;
+          fourStarPity = 0;  // ✅ 出四星重置四星保底
         } else {
           starLevel = 3;
-          fourStarPityCounter++;
-          pity++;
+          fourStarPity++;    // ✅ 未出四星，计数+1
         }
       }
 
@@ -395,9 +402,10 @@ export default function GachaPage() {
       results.push(card);
     }
 
-    // 更新保底和总抽数
+    // 更新状态
     setPityCounter(pity);
     setPullsSinceFiveStar(pullsSinceFive);
+    setFourStarPityCounter(fourStarPity);
     setTotalPulls(prev => prev + 10);
     setHistory(prev => [...results, ...prev].slice(0, 20));
     setTenPullResults(results);
@@ -441,6 +449,7 @@ export default function GachaPage() {
       setTotalPulls(0);
       setPityCounter(0);
       setPullsSinceFiveStar(0);
+      setFourStarPityCounter(0);
       setTenPullResults([]);
     }
   };
