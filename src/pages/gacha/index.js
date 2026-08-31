@@ -126,6 +126,11 @@ export default function GachaPage() {
   const [goldenFlash, setGoldenFlash] = useState(false);
   const [isFiveStar, setIsFiveStar] = useState(false);
   
+  // ===== 五星逐张展示状态 =====
+  const [fiveStarCards, setFiveStarCards] = useState([]);
+  const [currentFiveStarIndex, setCurrentFiveStarIndex] = useState(-1);
+  const [isFiveStarRevealMode, setIsFiveStarRevealMode] = useState(false);
+  
   // 动画阶段控制
   const [phase, setPhase] = useState('idle');
   const [previewEmoji, setPreviewEmoji] = useState('✨');
@@ -278,6 +283,8 @@ export default function GachaPage() {
     setIsDrawing(true);
     setIsTenPull(false);
     setTenPullResults([]);
+    setIsFiveStarRevealMode(false);
+    setFiveStarCards([]);
 
     const fiveStarRate = getFiveStarRate(pityCounter, pullsSinceFiveStar);
     const roll = Math.random() * 100;
@@ -330,7 +337,6 @@ export default function GachaPage() {
     setIsOpen(true);
     particles = [];
     
-    // ✅ 出金时粒子大爆发
     if (isFiveStarResult) {
       triggerGoldenFlash();
       spawnParticles(100, true, scheme);
@@ -353,7 +359,7 @@ export default function GachaPage() {
       setPhase('reveal');
       setShowCloseBtn(true);
       if (isFiveStarResult) {
-        spawnParticles(80, true, scheme);
+        spawnParticles(70, true, scheme);
       } else {
         spawnParticles(50, true, scheme);
       }
@@ -366,6 +372,10 @@ export default function GachaPage() {
     if (isDrawing) return;
     setIsDrawing(true);
     setIsTenPull(true);
+    setShowCloseBtn(false);
+    setIsFiveStarRevealMode(false);
+    setFiveStarCards([]);
+    setCurrentFiveStarIndex(-1);
 
     const results = [];
     let pity = pityCounter;
@@ -373,6 +383,7 @@ export default function GachaPage() {
     let fourStarPity = fourStarPityCounter;
     let fiveStarCount = 0;
     let fourStarCount = 0;
+    const fiveStarList = [];
 
     for (let i = 0; i < 10; i++) {
       const fiveStarRate = getFiveStarRate(pity, pullsSinceFive);
@@ -414,6 +425,9 @@ export default function GachaPage() {
         : CARDS[Math.floor(Math.random() * CARDS.length)];
       
       results.push(card);
+      if (starLevel === 5) {
+        fiveStarList.push(card);
+      }
     }
 
     setPityCounter(pity);
@@ -423,42 +437,103 @@ export default function GachaPage() {
     setHistory(prev => [...results, ...prev].slice(0, 20));
     setTenPullResults(results);
 
-    const mainCard = results.find(c => c.rarity === '★★★★★') 
-      || results.find(c => c.rarity === '★★★★')
-      || results[0];
-    
-    setCurrentCard(mainCard);
-    const scheme = getStarColors(mainCard.rarity);
-    setCurrentStarScheme(scheme);
-    setPreviewEmoji(mainCard.emoji);
-    setIsOpen(true);
-    particles = [];
-    
     const hasFiveStar = results.some(c => c.rarity === '★★★★★');
     setIsFiveStar(hasFiveStar);
-    
-    // ✅ 十连出金时粒子大爆发
-    if (hasFiveStar) {
+
+    // ===== 如果有五星，进入逐张展示模式 =====
+    if (hasFiveStar && fiveStarList.length > 0) {
+      setFiveStarCards(fiveStarList);
+      setCurrentFiveStarIndex(0);
+      setIsFiveStarRevealMode(true);
+      setShowCloseBtn(false);
+      
+      const firstCard = fiveStarList[0];
+      setCurrentCard(firstCard);
+      const scheme = getStarColors(firstCard.rarity);
+      setCurrentStarScheme(scheme);
+      setPreviewEmoji(firstCard.emoji);
+      setIsOpen(true);
+      particles = [];
+      
       triggerGoldenFlash();
       spawnParticles(120, true, scheme);
       setTimeout(() => spawnParticles(80, true, scheme), 200);
       setTimeout(() => spawnParticles(50, true, scheme), 400);
+      
+      setPhase('preview');
+      setTimeout(() => setPhase('transition'), 1500);
+      setTimeout(() => {
+        setPhase('reveal');
+        setIsDrawing(false);
+      }, 2500);
     } else {
+      // 没有五星，正常显示
+      const mainCard = results.find(c => c.rarity === '★★★★') || results[0];
+      setCurrentCard(mainCard);
+      const scheme = getStarColors(mainCard.rarity);
+      setCurrentStarScheme(scheme);
+      setPreviewEmoji(mainCard.emoji);
+      setIsOpen(true);
+      particles = [];
       spawnParticles(50, true, scheme);
+      
+      setPhase('preview');
+      setTimeout(() => setPhase('transition'), 1500);
+      setTimeout(() => {
+        setPhase('reveal');
+        setShowCloseBtn(true);
+        setIsDrawing(false);
+      }, 2500);
     }
+  };
+
+  // ===== 点击卡片继续下一张 =====
+  const handleCardClick = () => {
+    if (!isFiveStarRevealMode) return;
+    if (phase !== 'reveal') return;
+    if (isDrawing) return;
     
-    setPhase('preview');
-    setTimeout(() => setPhase('transition'), 1500);
-    setTimeout(() => {
-      setPhase('reveal');
+    const nextIndex = currentFiveStarIndex + 1;
+    
+    if (nextIndex < fiveStarCards.length) {
+      setIsDrawing(true);
+      const card = fiveStarCards[nextIndex];
+      setCurrentFiveStarIndex(nextIndex);
+      setCurrentCard(card);
+      const scheme = getStarColors(card.rarity);
+      setCurrentStarScheme(scheme);
+      setPreviewEmoji(card.emoji);
+      particles = [];
+      
+      triggerGoldenFlash();
+      spawnParticles(100, true, scheme);
+      setTimeout(() => spawnParticles(60, true, scheme), 200);
+      
+      setPhase('preview');
+      setTimeout(() => setPhase('transition'), 1200);
+      setTimeout(() => {
+        setPhase('reveal');
+        setIsDrawing(false);
+      }, 2000);
+    } else {
+      // 所有五星展示完毕，显示完整十连结果
+      setIsFiveStarRevealMode(false);
       setShowCloseBtn(true);
-      if (hasFiveStar) {
-        spawnParticles(100, true, scheme);
-      } else {
-        spawnParticles(50, true, scheme);
-      }
+      setFiveStarCards([]);
+      setCurrentFiveStarIndex(-1);
+      
+      const mainCard = tenPullResults.find(c => c.rarity === '★★★★★') 
+        || tenPullResults.find(c => c.rarity === '★★★★')
+        || tenPullResults[0];
+      setCurrentCard(mainCard);
+      const scheme = getStarColors(mainCard.rarity);
+      setCurrentStarScheme(scheme);
+      setPreviewEmoji(mainCard.emoji);
+      
+      setPhase('reveal');
+      spawnParticles(60, true, scheme);
       setIsDrawing(false);
-    }, 2500);
+    }
   };
 
   const closeCard = () => {
@@ -467,6 +542,9 @@ export default function GachaPage() {
     setShowCloseBtn(false);
     particles = [];
     setIsFiveStar(false);
+    setIsFiveStarRevealMode(false);
+    setFiveStarCards([]);
+    setCurrentFiveStarIndex(-1);
     setTimeout(() => setCurrentCard(null), 300);
   };
 
@@ -479,6 +557,9 @@ export default function GachaPage() {
       setFourStarPityCounter(0);
       setTenPullResults([]);
       setIsFiveStar(false);
+      setIsFiveStarRevealMode(false);
+      setFiveStarCards([]);
+      setCurrentFiveStarIndex(-1);
     }
   };
 
@@ -488,6 +569,7 @@ export default function GachaPage() {
 
     const scheme = currentStarScheme || getStarColors(currentCard.rarity);
     const isFiveStarCard = currentCard.rarity === '★★★★★';
+    const isInRevealMode = isFiveStarRevealMode && fiveStarCards.length > 0;
 
     if (phase === 'preview') {
       return (
@@ -572,10 +654,20 @@ export default function GachaPage() {
 
     if (phase === 'reveal') {
       const hasFiveStar = tenPullResults.some(c => c.rarity === '★★★★★');
+      
+      // 如果是逐张展示模式，只显示当前卡片
       return (
         <div 
           className={`${styles.cardBorder} ${isFiveStarCard ? styles.fiveStar : ''}`}
           style={{ 
+            borderColor: isFiveStarCard ? '#ffd700' : currentCard.color, 
+            boxShadow: isFiveStarCard 
+              ? `0 0 80px rgba(255,215,0,0.6), 0 0 160px rgba(255,215,0,0.2)` 
+              : `0 0 80px ${currentCard.color}60` 
+          }}
+          onClick={isInRevealMode ? handleCardClick : undefined}
+          style={{ 
+            cursor: isInRevealMode ? 'pointer' : 'default',
             borderColor: isFiveStarCard ? '#ffd700' : currentCard.color, 
             boxShadow: isFiveStarCard 
               ? `0 0 80px rgba(255,215,0,0.6), 0 0 160px rgba(255,215,0,0.2)` 
@@ -592,7 +684,15 @@ export default function GachaPage() {
           <div className={styles.cardTitle}>{currentCard.title}</div>
           <div className={styles.cardDescription}>"{currentCard.description}"</div>
           
-          {isTenPull && tenPullResults.length > 1 && (
+          {/* 逐张展示模式：显示进度和点击提示 */}
+          {isInRevealMode && (
+            <>
+              <div className={styles.clickHint}>✨ 点击继续 ✨</div>
+            </>
+          )}
+          
+          {/* 非逐张展示模式：显示完整十连列表 */}
+          {!isInRevealMode && isTenPull && tenPullResults.length > 1 && (
             <div className={styles.tenPullList}>
               {tenPullResults.map((card, idx) => (
                 <span key={idx} className={styles.tenPullItem}>
@@ -620,7 +720,6 @@ export default function GachaPage() {
       description="抽取属于你的枫丹角色"
     >
       <div className={styles.gachaPage}>
-        {/* 出金全屏闪光 */}
         {goldenFlash && <div className={styles.goldenFlash} />}
         
         <div className={styles.backgroundGlow}></div>
@@ -720,7 +819,7 @@ export default function GachaPage() {
       </div>
 
       {isOpen && currentCard && (
-        <div className={styles.overlay} onClick={phase === 'reveal' ? closeCard : undefined}>
+        <div className={styles.overlay} onClick={phase === 'reveal' && !isFiveStarRevealMode ? closeCard : undefined}>
           <div className={styles.cardModal} onClick={(e) => e.stopPropagation()}>
             <div className={styles.cardWrapper}>
               {renderContent()}
