@@ -111,9 +111,9 @@ export default function GachaPage() {
   const [showHistory, setShowHistory] = useState(false);
   
   // ===== 保底相关状态 =====
-  const [pityCounter, setPityCounter] = useState(0);           // 五星保底计数
+  const [pityCounter, setPityCounter] = useState(0);
   const [totalPulls, setTotalPulls] = useState(0);
-  const [pullsSinceFiveStar, setPullsSinceFiveStar] = useState(0); // 出金后计数
+  const [pullsSinceFiveStar, setPullsSinceFiveStar] = useState(0);
   
   // ===== 四星保底状态（独立） =====
   const [fourStarPityCounter, setFourStarPityCounter] = useState(0);
@@ -121,6 +121,10 @@ export default function GachaPage() {
   // ===== 十连相关状态 =====
   const [isTenPull, setIsTenPull] = useState(false);
   const [tenPullResults, setTenPullResults] = useState([]);
+  
+  // ===== 出金闪光状态 =====
+  const [goldenFlash, setGoldenFlash] = useState(false);
+  const [isFiveStar, setIsFiveStar] = useState(false);
   
   // 动画阶段控制
   const [phase, setPhase] = useState('idle');
@@ -130,30 +134,23 @@ export default function GachaPage() {
   const [currentStarScheme, setCurrentStarScheme] = useState(null);
 
   // ===== 概率配置 =====
-  const FIVE_STAR_BASE_RATE = 0.6;        // 五星基础概率 0.6%
-  const FOUR_STAR_BASE_RATE = 5.0;         // 四星基础概率 5.0%
-  const HARD_PITY = 80;                    // 硬保底：80抽必出五星
-  const SOFT_PITY_START = 73;              // 软保底开始：73抽后概率提升
-  const SOFT_PITY_INCREASE = 6;            // 软保底每抽增加 6%
-  const FOUR_STAR_HARD_PITY = 10;          // 四星硬保底：10抽必出四星
-  
-  // ===== 出金后20抽内概率加成 =====
-  const RECENT_FIVE_STAR_BONUS_RATE = 0.3;   // 额外加成概率 0.3%
-  const RECENT_FIVE_STAR_WINDOW = 20;        // 加成持续20抽
+  const FIVE_STAR_BASE_RATE = 0.6;
+  const FOUR_STAR_BASE_RATE = 5.0;
+  const HARD_PITY = 80;
+  const SOFT_PITY_START = 73;
+  const SOFT_PITY_INCREASE = 6;
+  const FOUR_STAR_HARD_PITY = 10;
+  const RECENT_FIVE_STAR_BONUS_RATE = 0.3;
+  const RECENT_FIVE_STAR_WINDOW = 20;
 
   // ===== 计算实际五星概率 =====
   const getFiveStarRate = (pity, pullsSinceFive) => {
-    // 1. 硬保底
     if (pity >= HARD_PITY) return 100;
-    
-    // 2. 软保底（73抽后递增）
     let rate = FIVE_STAR_BASE_RATE;
     if (pity >= SOFT_PITY_START) {
       const extra = (pity - SOFT_PITY_START + 1) * SOFT_PITY_INCREASE;
       rate = Math.min(FIVE_STAR_BASE_RATE + extra, 100);
     }
-    
-    // 3. 出金后20抽内轻微加成（仅当不在软保底区间时生效）
     if (pullsSinceFive <= RECENT_FIVE_STAR_WINDOW && pullsSinceFive > 0 && pity < SOFT_PITY_START) {
       let bonus = RECENT_FIVE_STAR_BONUS_RATE;
       if (pullsSinceFive > 10) {
@@ -161,7 +158,6 @@ export default function GachaPage() {
       }
       rate = Math.min(rate + bonus, 100);
     }
-    
     return rate;
   };
 
@@ -270,7 +266,13 @@ export default function GachaPage() {
     }
   };
 
-  // ===== 单抽逻辑（含独立四星保底） =====
+  // ===== 触发金色闪光 =====
+  const triggerGoldenFlash = () => {
+    setGoldenFlash(true);
+    setTimeout(() => setGoldenFlash(false), 800);
+  };
+
+  // ===== 单抽逻辑 =====
   const drawCard = () => {
     if (isDrawing) return;
     setIsDrawing(true);
@@ -281,36 +283,34 @@ export default function GachaPage() {
     const roll = Math.random() * 100;
     
     let starLevel;
+    let isFiveStarResult = false;
     
-    // 1. 判断五星
     if (roll < fiveStarRate || pityCounter >= HARD_PITY) {
       starLevel = 5;
+      isFiveStarResult = true;
       setPullsSinceFiveStar(0);
       setPityCounter(0);
-      setFourStarPityCounter(0);  // ✅ 出金重置四星保底
+      setFourStarPityCounter(0);
     } else {
-      // 未出金，五星保底+1
       setPityCounter(prev => prev + 1);
       setPullsSinceFiveStar(prev => prev + 1);
       
-      // 2. 判断四星（独立四星保底）
       const isFourStarGuaranteed = fourStarPityCounter >= FOUR_STAR_HARD_PITY - 1;
       
       if (isFourStarGuaranteed) {
         starLevel = 4;
-        setFourStarPityCounter(0);  // ✅ 出四星重置四星保底
+        setFourStarPityCounter(0);
       } else if (roll < fiveStarRate + FOUR_STAR_BASE_RATE) {
         starLevel = 4;
-        setFourStarPityCounter(0);  // ✅ 出四星重置四星保底
+        setFourStarPityCounter(0);
       } else {
         starLevel = 3;
-        setFourStarPityCounter(prev => prev + 1);  // ✅ 未出四星，计数+1
+        setFourStarPityCounter(prev => prev + 1);
       }
     }
 
     setTotalPulls(prev => prev + 1);
 
-    // 从对应星级卡池抽取
     const starMap = { 5: '★★★★★', 4: '★★★★', 3: '★★★' };
     const targetRarity = starMap[starLevel];
     const filtered = CARDS.filter(c => c.rarity === targetRarity);
@@ -318,11 +318,11 @@ export default function GachaPage() {
       ? filtered[Math.floor(Math.random() * filtered.length)]
       : CARDS[Math.floor(Math.random() * CARDS.length)];
 
-    // 后续动画逻辑
     setCurrentCard(card);
     const scheme = getStarColors(card.rarity);
     setCurrentStarScheme(scheme);
     setHistory(prev => [card, ...prev].slice(0, 20));
+    setIsFiveStar(isFiveStarResult);
 
     setPhase('preview');
     setShowCloseBtn(false);
@@ -330,22 +330,38 @@ export default function GachaPage() {
     setIsOpen(true);
     particles = [];
     
-    spawnParticles(starLevel === 5 ? 60 : 40, false, scheme);
+    // ✅ 出金时粒子大爆发
+    if (isFiveStarResult) {
+      triggerGoldenFlash();
+      spawnParticles(100, true, scheme);
+      setTimeout(() => spawnParticles(60, true, scheme), 200);
+      setTimeout(() => spawnParticles(40, true, scheme), 400);
+    } else {
+      spawnParticles(40, false, scheme);
+    }
     
     setTimeout(() => {
       setPhase('transition');
-      spawnParticles(starLevel === 5 ? 40 : 30, false, scheme);
+      if (isFiveStarResult) {
+        spawnParticles(60, true, scheme);
+      } else {
+        spawnParticles(30, false, scheme);
+      }
     }, 1500);
     
     setTimeout(() => {
       setPhase('reveal');
       setShowCloseBtn(true);
-      spawnParticles(starLevel === 5 ? 70 : 50, true, scheme);
+      if (isFiveStarResult) {
+        spawnParticles(80, true, scheme);
+      } else {
+        spawnParticles(50, true, scheme);
+      }
       setIsDrawing(false);
     }, 2500);
   };
 
-  // ===== 十连抽逻辑（含独立四星保底） =====
+  // ===== 十连抽逻辑 =====
   const drawTenCards = () => {
     if (isDrawing) return;
     setIsDrawing(true);
@@ -364,31 +380,29 @@ export default function GachaPage() {
       
       let starLevel;
       
-      // 1. 判断五星
       if (roll < fiveStarRate || pity >= HARD_PITY) {
         starLevel = 5;
         fiveStarCount++;
         pity = 0;
         pullsSinceFive = 0;
-        fourStarPity = 0;  // ✅ 出金重置四星保底
+        fourStarPity = 0;
       } else {
         pity++;
         pullsSinceFive++;
         
-        // 2. 判断四星（独立四星保底）
         const isFourStarGuaranteed = fourStarPity >= FOUR_STAR_HARD_PITY - 1;
         
         if (isFourStarGuaranteed) {
           starLevel = 4;
           fourStarCount++;
-          fourStarPity = 0;  // ✅ 出四星重置四星保底
+          fourStarPity = 0;
         } else if (roll < fiveStarRate + FOUR_STAR_BASE_RATE) {
           starLevel = 4;
           fourStarCount++;
-          fourStarPity = 0;  // ✅ 出四星重置四星保底
+          fourStarPity = 0;
         } else {
           starLevel = 3;
-          fourStarPity++;    // ✅ 未出四星，计数+1
+          fourStarPity++;
         }
       }
 
@@ -402,7 +416,6 @@ export default function GachaPage() {
       results.push(card);
     }
 
-    // 更新状态
     setPityCounter(pity);
     setPullsSinceFiveStar(pullsSinceFive);
     setFourStarPityCounter(fourStarPity);
@@ -410,7 +423,6 @@ export default function GachaPage() {
     setHistory(prev => [...results, ...prev].slice(0, 20));
     setTenPullResults(results);
 
-    // 选择主卡片
     const mainCard = results.find(c => c.rarity === '★★★★★') 
       || results.find(c => c.rarity === '★★★★')
       || results[0];
@@ -423,13 +435,28 @@ export default function GachaPage() {
     particles = [];
     
     const hasFiveStar = results.some(c => c.rarity === '★★★★★');
-    spawnParticles(hasFiveStar ? 80 : 50, true, scheme);
+    setIsFiveStar(hasFiveStar);
+    
+    // ✅ 十连出金时粒子大爆发
+    if (hasFiveStar) {
+      triggerGoldenFlash();
+      spawnParticles(120, true, scheme);
+      setTimeout(() => spawnParticles(80, true, scheme), 200);
+      setTimeout(() => spawnParticles(50, true, scheme), 400);
+    } else {
+      spawnParticles(50, true, scheme);
+    }
     
     setPhase('preview');
     setTimeout(() => setPhase('transition'), 1500);
     setTimeout(() => {
       setPhase('reveal');
       setShowCloseBtn(true);
+      if (hasFiveStar) {
+        spawnParticles(100, true, scheme);
+      } else {
+        spawnParticles(50, true, scheme);
+      }
       setIsDrawing(false);
     }, 2500);
   };
@@ -439,10 +466,10 @@ export default function GachaPage() {
     setPhase('idle');
     setShowCloseBtn(false);
     particles = [];
+    setIsFiveStar(false);
     setTimeout(() => setCurrentCard(null), 300);
   };
 
-  // ===== 清空所有数据 =====
   const clearAllData = () => {
     if (window.confirm('确定要清空所有抽卡记录吗？')) {
       setHistory([]);
@@ -451,6 +478,7 @@ export default function GachaPage() {
       setPullsSinceFiveStar(0);
       setFourStarPityCounter(0);
       setTenPullResults([]);
+      setIsFiveStar(false);
     }
   };
 
@@ -459,14 +487,15 @@ export default function GachaPage() {
     if (!currentCard) return null;
 
     const scheme = currentStarScheme || getStarColors(currentCard.rarity);
+    const isFiveStarCard = currentCard.rarity === '★★★★★';
 
     if (phase === 'preview') {
       return (
         <div 
           className={styles.previewContainer}
           style={{
-            borderColor: scheme.border,
-            boxShadow: `0 0 80px ${scheme.glow}`
+            borderColor: isFiveStarCard ? '#ffd700' : scheme.border,
+            boxShadow: isFiveStarCard ? `0 0 100px rgba(255,215,0,0.6)` : `0 0 80px ${scheme.glow}`
           }}
         >
           <div 
@@ -475,9 +504,9 @@ export default function GachaPage() {
               background: `conic-gradient(
                 from 0deg, 
                 transparent, 
-                ${scheme.primary}33, 
+                ${isFiveStarCard ? 'rgba(255,215,0,0.4)' : scheme.primary + '33'}, 
                 transparent, 
-                ${scheme.primary}55, 
+                ${isFiveStarCard ? 'rgba(255,215,0,0.6)' : scheme.primary + '55'}, 
                 transparent
               )`
             }}
@@ -485,19 +514,21 @@ export default function GachaPage() {
           <div 
             className={styles.previewEmoji}
             style={{
-              filter: `drop-shadow(0 0 60px ${scheme.glow})`
+              filter: isFiveStarCard 
+                ? `drop-shadow(0 0 80px rgba(255,215,0,0.8))` 
+                : `drop-shadow(0 0 60px ${scheme.glow})`
             }}
           >
             {previewEmoji}
           </div>
           <div 
             className={styles.previewHint}
-            style={{ color: scheme.primary }}
+            style={{ color: isFiveStarCard ? '#ffd700' : scheme.primary }}
           >
-            ✦ 星轨汇聚中 ✦
+            {isFiveStarCard ? '✦ 金光降临 ✦' : '✦ 星轨汇聚中 ✦'}
           </div>
           <div className={styles.previewSubHint}>
-            水神之谕 · 降临
+            {isFiveStarCard ? '⭐ 水神之选 ⭐' : '水神之谕 · 降临'}
           </div>
         </div>
       );
@@ -508,18 +539,22 @@ export default function GachaPage() {
         <div 
           className={styles.transitionContainer}
           style={{
-            background: `radial-gradient(ellipse at center, ${scheme.primary}15 0%, transparent 70%)`
+            background: isFiveStarCard 
+              ? `radial-gradient(ellipse at center, rgba(255,215,0,0.25) 0%, rgba(255,215,0,0.05) 50%, transparent 70%)`
+              : `radial-gradient(ellipse at center, ${scheme.primary}15 0%, transparent 70%)`
           }}
         >
           <div 
             className={styles.transitionGlow}
             style={{
-              background: `radial-gradient(circle, ${scheme.primary}30 0%, transparent 60%)`
+              background: isFiveStarCard 
+                ? `radial-gradient(circle, rgba(255,215,0,0.4) 0%, rgba(255,215,0,0.1) 60%)`
+                : `radial-gradient(circle, ${scheme.primary}30 0%, transparent 60%)`
             }}
           ></div>
           <div 
             className={styles.transitionBurst}
-            style={{ color: scheme.primary }}
+            style={{ color: isFiveStarCard ? '#ffd700' : scheme.primary }}
           >
             <span>✦</span>
             <span>✦</span>
@@ -527,9 +562,9 @@ export default function GachaPage() {
           </div>
           <div 
             className={styles.transitionText}
-            style={{ color: scheme.primary }}
+            style={{ color: isFiveStarCard ? '#ffd700' : scheme.primary }}
           >
-            · 光芒汇聚 ·
+            {isFiveStarCard ? '· 金光汇聚 ·' : '· 光芒汇聚 ·'}
           </div>
         </div>
       );
@@ -539,12 +574,19 @@ export default function GachaPage() {
       const hasFiveStar = tenPullResults.some(c => c.rarity === '★★★★★');
       return (
         <div 
-          className={styles.cardBorder}
-          style={{ borderColor: currentCard.color, boxShadow: `0 0 80px ${currentCard.color}60` }}
+          className={`${styles.cardBorder} ${isFiveStarCard ? styles.fiveStar : ''}`}
+          style={{ 
+            borderColor: isFiveStarCard ? '#ffd700' : currentCard.color, 
+            boxShadow: isFiveStarCard 
+              ? `0 0 80px rgba(255,215,0,0.6), 0 0 160px rgba(255,215,0,0.2)` 
+              : `0 0 80px ${currentCard.color}60` 
+          }}
         >
-          <div className={styles.cardRarity}>{currentCard.rarity}</div>
+          <div className={`${styles.cardRarity} ${isFiveStarCard ? styles.fiveStar : ''}`}>
+            {currentCard.rarity}
+          </div>
           <div className={styles.cardEmoji}>{currentCard.emoji}</div>
-          <div className={styles.cardName} style={{ color: currentCard.color }}>
+          <div className={`${styles.cardName} ${isFiveStarCard ? styles.fiveStar : ''}`} style={{ color: currentCard.color }}>
             {currentCard.name}
           </div>
           <div className={styles.cardTitle}>{currentCard.title}</div>
@@ -560,10 +602,10 @@ export default function GachaPage() {
             </div>
           )}
           
-          <div className={styles.cardWatermark}>
+          <div className={`${styles.cardWatermark} ${isFiveStarCard ? styles.fiveStar : ''}`}>
             {isTenPull 
               ? (hasFiveStar ? '✦ 十连 · 出金！ ✦' : '✦ 十连 · 下次一定 ✦')
-              : '✦ 水神赐福 ✦'}
+              : (isFiveStarCard ? '✦ 水神赐福 · 传说 ✦' : '✦ 水神赐福 ✦')}
           </div>
         </div>
       );
@@ -578,6 +620,9 @@ export default function GachaPage() {
       description="抽取属于你的枫丹角色"
     >
       <div className={styles.gachaPage}>
+        {/* 出金全屏闪光 */}
+        {goldenFlash && <div className={styles.goldenFlash} />}
+        
         <div className={styles.backgroundGlow}></div>
         <div className={styles.backgroundGlow2}></div>
 
