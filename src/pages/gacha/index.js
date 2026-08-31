@@ -135,10 +135,6 @@ export default function GachaPage() {
   const SOFT_PITY_START = 73;              // 软保底开始：73抽后概率提升
   const SOFT_PITY_INCREASE = 6;            // 软保底每抽增加 6%
   const FOUR_STAR_PITY = 10;               // 四星保底：10抽必出四星或以上
-  
-  // ===== 出金后20抽内概率加成 =====
-  const RECENT_FIVE_STAR_BONUS_RATE = 0.3;   // 额外加成概率 0.3%
-  const RECENT_FIVE_STAR_WINDOW = 20;        // 加成持续20抽
 
   // ===== 计算实际五星概率 =====
   const getFiveStarRate = (pity, pullsSinceFive) => {
