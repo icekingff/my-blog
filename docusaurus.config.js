@@ -154,6 +154,7 @@ const config = {
             label: '📜 笔记本',
           },
           {to: '/blog', label: '📖 blog', position: 'left'},
+          {to: '/gacha', label: '💧 抽卡', position: 'left'},
           {
             href: 'https://github.com/your-repo',
             label: '⚖️ 源代码',
