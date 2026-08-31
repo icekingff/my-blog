@@ -92,7 +92,6 @@ let animationId = null;
 
 // ===== 统一使用金色 =====
 const getStarColors = (stars) => {
-  // 所有星级统一返回金色
   return {
     primary: '#ffd700',
     secondary: '#fff8dc',
@@ -111,12 +110,59 @@ export default function GachaPage() {
   const [isOpen, setIsOpen] = useState(false);
   const [showHistory, setShowHistory] = useState(false);
   
+  // ===== 保底相关状态 =====
+  const [pityCounter, setPityCounter] = useState(0);
+  const [totalPulls, setTotalPulls] = useState(0);
+  
+  // ===== 出金后20抽计数器 =====
+  const [pullsSinceFiveStar, setPullsSinceFiveStar] = useState(0);
+  
+  // ===== 十连相关状态 =====
+  const [isTenPull, setIsTenPull] = useState(false);
+  const [tenPullResults, setTenPullResults] = useState([]);
+  
   // 动画阶段控制
   const [phase, setPhase] = useState('idle');
   const [previewEmoji, setPreviewEmoji] = useState('✨');
   const [showCloseBtn, setShowCloseBtn] = useState(false);
   const [goldenParticles, setGoldenParticles] = useState([]);
   const [currentStarScheme, setCurrentStarScheme] = useState(null);
+
+  // ===== 概率配置 =====
+  const FIVE_STAR_BASE_RATE = 0.6;        // 五星基础概率 0.6%
+  const FOUR_STAR_BASE_RATE = 5.0;         // 四星基础概率 5.0%
+  const HARD_PITY = 80;                    // 硬保底：80抽必出五星
+  const SOFT_PITY_START = 73;              // 软保底开始：73抽后概率提升
+  const SOFT_PITY_INCREASE = 6;            // 软保底每抽增加 6%
+  const FOUR_STAR_PITY = 10;               // 四星保底：10抽必出四星或以上
+  
+  // ===== 出金后20抽内概率加成 =====
+  const RECENT_FIVE_STAR_BONUS_RATE = 0.3;   // 额外加成概率 0.3%
+  const RECENT_FIVE_STAR_WINDOW = 20;        // 加成持续20抽
+
+  // ===== 计算实际五星概率 =====
+  const getFiveStarRate = (pity, pullsSinceFive) => {
+    // 1. 硬保底
+    if (pity >= HARD_PITY) return 100;
+    
+    // 2. 软保底（73抽后递增）
+    let rate = FIVE_STAR_BASE_RATE;
+    if (pity >= SOFT_PITY_START) {
+      const extra = (pity - SOFT_PITY_START + 1) * SOFT_PITY_INCREASE;
+      rate = Math.min(FIVE_STAR_BASE_RATE + extra, 100);
+    }
+    
+    // 3. 出金后20抽内轻微加成（仅当不在软保底区间时生效）
+    if (pullsSinceFive <= RECENT_FIVE_STAR_WINDOW && pullsSinceFive > 0 && pity < SOFT_PITY_START) {
+      let bonus = RECENT_FIVE_STAR_BONUS_RATE;
+      if (pullsSinceFive > 10) {
+        bonus = RECENT_FIVE_STAR_BONUS_RATE * (1 - (pullsSinceFive - 10) / 10);
+      }
+      rate = Math.min(rate + bonus, 100);
+    }
+    
+    return rate;
+  };
 
   // 金色粒子Canvas
   useEffect(() => {
@@ -223,37 +269,163 @@ export default function GachaPage() {
     }
   };
 
+  // ===== 单抽逻辑 =====
   const drawCard = () => {
     if (isDrawing) return;
     setIsDrawing(true);
+    setIsTenPull(false);
+    setTenPullResults([]);
 
-    const card = CARDS[Math.floor(Math.random() * CARDS.length)];
+    // 计算当前实际概率
+    const fiveStarRate = getFiveStarRate(pityCounter, pullsSinceFiveStar);
+    const roll = Math.random() * 100;
+    
+    let starLevel;
+    
+    // 判断五星
+    if (roll < fiveStarRate || pityCounter >= HARD_PITY) {
+      starLevel = 5;
+      setPullsSinceFiveStar(0);
+    } else {
+      setPullsSinceFiveStar(prev => prev + 1);
+      
+      // 四星保底逻辑
+      const fourStarPity = (pityCounter + pullsSinceFiveStar) % FOUR_STAR_PITY;
+      const isFourStarGuaranteed = fourStarPity === 9;
+      
+      if (isFourStarGuaranteed) {
+        starLevel = 4;
+      } else if (roll < fiveStarRate + FOUR_STAR_BASE_RATE) {
+        starLevel = 4;
+      } else {
+        starLevel = 3;
+      }
+    }
+
+    // 更新保底计数
+    if (starLevel === 5) {
+      setPityCounter(0);
+    } else {
+      setPityCounter(prev => prev + 1);
+    }
+    setTotalPulls(prev => prev + 1);
+
+    // 从对应星级卡池抽取
+    const starMap = { 5: '★★★★★', 4: '★★★★', 3: '★★★' };
+    const targetRarity = starMap[starLevel];
+    const filtered = CARDS.filter(c => c.rarity === targetRarity);
+    const card = filtered.length > 0 
+      ? filtered[Math.floor(Math.random() * filtered.length)]
+      : CARDS[Math.floor(Math.random() * CARDS.length)];
+
+    // 后续动画逻辑
     setCurrentCard(card);
     const scheme = getStarColors(card.rarity);
     setCurrentStarScheme(scheme);
-    setHistory(prev => [card, ...prev].slice(0, 10));
+    setHistory(prev => [card, ...prev].slice(0, 20));
 
-    // 重置状态
     setPhase('preview');
     setShowCloseBtn(false);
     setPreviewEmoji(card.emoji);
     setIsOpen(true);
     particles = [];
     
-    // 第一阶段：专属Emoji
-    spawnParticles(40, false, scheme);
+    spawnParticles(starLevel === 5 ? 60 : 40, false, scheme);
     
-    // 第二阶段：过渡
     setTimeout(() => {
       setPhase('transition');
-      spawnParticles(30, false, scheme);
+      spawnParticles(starLevel === 5 ? 40 : 30, false, scheme);
     }, 1500);
     
-    // 第三阶段：揭晓
     setTimeout(() => {
       setPhase('reveal');
       setShowCloseBtn(true);
-      spawnParticles(50, true, scheme);
+      spawnParticles(starLevel === 5 ? 70 : 50, true, scheme);
+      setIsDrawing(false);
+    }, 2500);
+  };
+
+  // ===== 十连抽逻辑 =====
+  const drawTenCards = () => {
+    if (isDrawing) return;
+    setIsDrawing(true);
+    setIsTenPull(true);
+
+    const results = [];
+    let pity = pityCounter;
+    let pullsSinceFive = pullsSinceFiveStar;
+    let fiveStarCount = 0;
+    let fourStarCount = 0;
+    let fourStarPityCounter = 0;
+
+    for (let i = 0; i < 10; i++) {
+      const fiveStarRate = getFiveStarRate(pity, pullsSinceFive);
+      const roll = Math.random() * 100;
+      
+      let starLevel;
+      
+      if (roll < fiveStarRate || pity >= HARD_PITY) {
+        starLevel = 5;
+        fiveStarCount++;
+        pity = 0;
+        pullsSinceFive = 0;
+        fourStarPityCounter = 0;
+      } else {
+        pullsSinceFive++;
+        
+        const isFourStarGuaranteed = fourStarPityCounter >= 9;
+        if (isFourStarGuaranteed) {
+          starLevel = 4;
+          fourStarCount++;
+          fourStarPityCounter = 0;
+        } else if (roll < fiveStarRate + FOUR_STAR_BASE_RATE) {
+          starLevel = 4;
+          fourStarCount++;
+          fourStarPityCounter = 0;
+        } else {
+          starLevel = 3;
+          fourStarPityCounter++;
+          pity++;
+        }
+      }
+
+      const starMap = { 5: '★★★★★', 4: '★★★★', 3: '★★★' };
+      const targetRarity = starMap[starLevel];
+      const filtered = CARDS.filter(c => c.rarity === targetRarity);
+      const card = filtered.length > 0 
+        ? filtered[Math.floor(Math.random() * filtered.length)]
+        : CARDS[Math.floor(Math.random() * CARDS.length)];
+      
+      results.push(card);
+    }
+
+    // 更新保底和总抽数
+    setPityCounter(pity);
+    setPullsSinceFiveStar(pullsSinceFive);
+    setTotalPulls(prev => prev + 10);
+    setHistory(prev => [...results, ...prev].slice(0, 20));
+    setTenPullResults(results);
+
+    // 选择主卡片
+    const mainCard = results.find(c => c.rarity === '★★★★★') 
+      || results.find(c => c.rarity === '★★★★')
+      || results[0];
+    
+    setCurrentCard(mainCard);
+    const scheme = getStarColors(mainCard.rarity);
+    setCurrentStarScheme(scheme);
+    setPreviewEmoji(mainCard.emoji);
+    setIsOpen(true);
+    particles = [];
+    
+    const hasFiveStar = results.some(c => c.rarity === '★★★★★');
+    spawnParticles(hasFiveStar ? 80 : 50, true, scheme);
+    
+    setPhase('preview');
+    setTimeout(() => setPhase('transition'), 1500);
+    setTimeout(() => {
+      setPhase('reveal');
+      setShowCloseBtn(true);
       setIsDrawing(false);
     }, 2500);
   };
@@ -266,13 +438,23 @@ export default function GachaPage() {
     setTimeout(() => setCurrentCard(null), 300);
   };
 
+  // ===== 清空所有数据 =====
+  const clearAllData = () => {
+    if (window.confirm('确定要清空所有抽卡记录吗？')) {
+      setHistory([]);
+      setTotalPulls(0);
+      setPityCounter(0);
+      setPullsSinceFiveStar(0);
+      setTenPullResults([]);
+    }
+  };
+
   // ===== 渲染不同阶段内容 =====
   const renderContent = () => {
     if (!currentCard) return null;
 
     const scheme = currentStarScheme || getStarColors(currentCard.rarity);
 
-    // 第一阶段：预览（不显示星级）
     if (phase === 'preview') {
       return (
         <div 
@@ -316,7 +498,6 @@ export default function GachaPage() {
       );
     }
 
-    // 第二阶段：过渡（不显示星级）
     if (phase === 'transition') {
       return (
         <div 
@@ -349,8 +530,8 @@ export default function GachaPage() {
       );
     }
 
-    // 第三阶段：揭晓（显示星级）
     if (phase === 'reveal') {
+      const hasFiveStar = tenPullResults.some(c => c.rarity === '★★★★★');
       return (
         <div 
           className={styles.cardBorder}
@@ -363,7 +544,22 @@ export default function GachaPage() {
           </div>
           <div className={styles.cardTitle}>{currentCard.title}</div>
           <div className={styles.cardDescription}>"{currentCard.description}"</div>
-          <div className={styles.cardWatermark}>✦ 水神赐福 ✦</div>
+          
+          {isTenPull && tenPullResults.length > 1 && (
+            <div className={styles.tenPullList}>
+              {tenPullResults.map((card, idx) => (
+                <span key={idx} className={styles.tenPullItem}>
+                  {card.emoji}
+                </span>
+              ))}
+            </div>
+          )}
+          
+          <div className={styles.cardWatermark}>
+            {isTenPull 
+              ? (hasFiveStar ? '✦ 十连 · 出金！ ✦' : '✦ 十连 · 下次一定 ✦')
+              : '✦ 水神赐福 ✦'}
+          </div>
         </div>
       );
     }
@@ -391,18 +587,33 @@ export default function GachaPage() {
         </div>
 
         <div className={styles.gachaContainer}>
-          <button 
-            className={styles.drawButton} 
-            onClick={drawCard}
-            disabled={isDrawing}
-          >
-            <span className={styles.buttonIcon}>💧</span>
-            {isDrawing ? '抽卡中...' : '✦ 开始抽卡 ✦'}
-            <span className={styles.buttonGlow}></span>
-          </button>
+          <div className={styles.buttonGroup}>
+            <button 
+              className={styles.drawButton} 
+              onClick={drawCard}
+              disabled={isDrawing}
+            >
+              <span className={styles.buttonIcon}>💧</span>
+              {isDrawing ? '抽卡中...' : '✦ 单抽 ✦'}
+              <span className={styles.buttonGlow}></span>
+            </button>
+            
+            <button 
+              className={styles.drawTenButton} 
+              onClick={drawTenCards}
+              disabled={isDrawing}
+            >
+              <span className={styles.buttonIcon}>🌟</span>
+              {isDrawing ? '抽卡中...' : '✦ 十连 ✦'}
+              <span className={styles.buttonGlow}></span>
+            </button>
+          </div>
 
           <div className={styles.stats}>
-            <span>🎴 已抽 {history.length} 次</span>
+            <div className={styles.statsLeft}>
+              <span>🎴 已抽 {totalPulls} 次</span>
+              <span className={styles.pityInfo}>💫 {pityCounter}/{HARD_PITY}</span>
+            </div>
             <div className={styles.statsButtons}>
               <button 
                 className={styles.historyToggle}
@@ -413,11 +624,7 @@ export default function GachaPage() {
               {history.length > 0 && (
                 <button 
                   className={styles.clearButton}
-                  onClick={() => {
-                    if (window.confirm('确定要清空所有抽卡记录吗？')) {
-                      setHistory([]);
-                    }
-                  }}
+                  onClick={clearAllData}
                 >
                   🗑️ 清空
                 </button>
@@ -462,7 +669,6 @@ export default function GachaPage() {
         </div>
       </div>
 
-      {/* 抽卡结果弹窗 */}
       {isOpen && currentCard && (
         <div className={styles.overlay} onClick={phase === 'reveal' ? closeCard : undefined}>
           <div className={styles.cardModal} onClick={(e) => e.stopPropagation()}>
