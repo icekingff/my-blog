@@ -82,3 +82,6 @@ NOI/NOI+/CTS:
 
 数学期望:
   label: '数学期望'
+
+线段树:
+  label: '线段树'
