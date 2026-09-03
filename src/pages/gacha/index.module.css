@@ -928,3 +928,45 @@
   0%, 100% { opacity: 0.5; }
   50% { opacity: 1; }
 }
+/* ===== 触屏设备优化 ===== */
+
+/* 触屏点击反馈 */
+.cardBorder:active {
+  transform: scale(0.97);
+  transition: transform 0.1s ease;
+}
+
+/* 触屏设备上增大点击区域 */
+@media (hover: none) and (pointer: coarse) {
+  .cardBorder {
+    cursor: default;
+    touch-action: manipulation;
+  }
+  
+  .clickHint {
+    font-size: 1.2rem;
+    padding: 0.5rem 1rem;
+    background: rgba(255, 215, 0, 0.1);
+    border-radius: 12px;
+  }
+  
+  .closeButton {
+    width: 48px;
+    height: 48px;
+    font-size: 1.4rem;
+    top: -18px;
+    right: -18px;
+  }
+  
+  .drawButton,
+  .drawTenButton {
+    padding: 1.2rem 1.5rem;
+    min-height: 60px;
+  }
+  
+  .historyToggle,
+  .clearButton {
+    padding: 0.4rem 1rem;
+    min-height: 40px;
+  }
+}

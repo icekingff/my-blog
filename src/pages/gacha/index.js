@@ -166,6 +166,21 @@ export default function GachaPage() {
     return rate;
   };
 
+  // ===== 弹窗打开时禁用滚动（触屏优化） =====
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+      document.body.style.touchAction = 'none';
+    } else {
+      document.body.style.overflow = '';
+      document.body.style.touchAction = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+      document.body.style.touchAction = '';
+    };
+  }, [isOpen]);
+
   // 金色粒子Canvas
   useEffect(() => {
     const canvas = document.createElement('canvas');
@@ -487,8 +502,13 @@ export default function GachaPage() {
     }
   };
 
-  // ===== 点击卡片继续下一张 =====
-  const handleCardClick = () => {
+  // ===== 点击卡片继续下一张（支持触屏） =====
+  const handleCardClick = (e) => {
+    // 支持触屏事件
+    if (e && e.type === 'touchend') {
+      e.preventDefault();
+    }
+    
     if (!isFiveStarRevealMode) return;
     if (phase !== 'reveal') return;
     if (isDrawing) return;
@@ -655,7 +675,6 @@ export default function GachaPage() {
     if (phase === 'reveal') {
       const hasFiveStar = tenPullResults.some(c => c.rarity === '★★★★★');
       
-      // 如果是逐张展示模式，只显示当前卡片
       return (
         <div 
           className={`${styles.cardBorder} ${isFiveStarCard ? styles.fiveStar : ''}`}
@@ -666,6 +685,7 @@ export default function GachaPage() {
               : `0 0 80px ${currentCard.color}60` 
           }}
           onClick={isInRevealMode ? handleCardClick : undefined}
+          onTouchEnd={isInRevealMode ? handleCardClick : undefined}
           style={{ 
             cursor: isInRevealMode ? 'pointer' : 'default',
             borderColor: isFiveStarCard ? '#ffd700' : currentCard.color, 
@@ -684,11 +704,9 @@ export default function GachaPage() {
           <div className={styles.cardTitle}>{currentCard.title}</div>
           <div className={styles.cardDescription}>"{currentCard.description}"</div>
           
-          {/* 逐张展示模式：显示进度和点击提示 */}
+          {/* 逐张展示模式：显示点击提示 */}
           {isInRevealMode && (
-            <>
-              <div className={styles.clickHint}>✨ 点击继续 ✨</div>
-            </>
+            <div className={styles.clickHint}>✨ 点击继续 ✨</div>
           )}
           
           {/* 非逐张展示模式：显示完整十连列表 */}
