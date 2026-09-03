@@ -85,3 +85,21 @@ NOI/NOI+/CTS:
 
 线段树:
   label: '线段树'
+
+最短路:
+  label: '最短路'
+
+队列:
+  label: '队列'
+
+拓扑排序:
+  label: '拓扑排序'
+
+并查集:
+  label: '并查集'
+
+Kruskal重构树:
+  label: 'Kruskal重构树'
+
+LCA:
+  label: 'LCA'
