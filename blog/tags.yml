@@ -103,3 +103,15 @@ Kruskal重构树:
 
 LCA:
   label: 'LCA'
+
+斜率优化:
+  label: '斜率优化'
+
+二维偏序:
+  label: '二维偏序'
+
+区间DP:
+  label: '区间DP'
+
+树形背包:
+  label: '树形背包'
