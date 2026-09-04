@@ -2,95 +2,92 @@ import React, { useState, useEffect } from 'react';
 import Layout from '@theme/Layout';
 import styles from './index.module.css';
 
-const CARDS = [
+// ===== 角色库 =====
+const ALL_CHARACTERS = [
+  // ===== 常驻角色（包含三星、四星、五星） =====
+  // 五星常驻
+  { id: 1, name: '芙宁娜', title: '水神 · 审判', emoji: '👑', rarity: '★★★★★', color: '#ffd700', description: '"罪人舞步旋，水神之审判永不停歇。"', isPermanent: false },
+  { id: 2, name: '那维莱特', title: '最高审判官', emoji: '⚖️', rarity: '★★★★★', color: '#4fc3f7', description: '"枫丹的律法，便是我的意志。"', isPermanent: false },
+  { id: 5, name: '娜维娅', title: '刺玫会会长', emoji: '🌹', rarity: '★★★★★', color: '#ffb74d', description: '"刺玫会的大门永远为你敞开。"', isPermanent: false },
+  { id: 7, name: '芙卡洛斯', title: '水神 · 原初', emoji: '🌟', rarity: '★★★★★', color: '#ff6b6b', description: '"她真的很了不起，这五百年来..."', isPermanent: false },
+  { id: 14, name: '七七', title: '不卜庐 · 吉祥物', emoji: '🧊', rarity: '★★★★★', color: '#ffd700', description: '"我叫七七，是个僵尸"', isPermanent: true },
+  // ===== 四星默认全部为常驻 =====
+  { id: 3, name: '琳妮特', title: '魔术助手', emoji: '🎭', rarity: '★★★★', color: '#81d4fa', description: '"魔术的精髓在于优雅。"', isPermanent: true },
+  { id: 4, name: '菲米尼', title: '潜水员', emoji: '🐧', rarity: '★★★★', color: '#80cbc4', description: '"海露的深处，藏着秘密。"', isPermanent: true },
+  { id: 6, name: '克洛琳德', title: '决斗代理人', emoji: '⚔️', rarity: '★★★★', color: '#a1887f', description: '"决斗的规则，由我来定。"', isPermanent: true },
+  { id: 12, name: '行秋', title: '飞云商会二少爷', emoji: '📖', rarity: '★★★★', color: '#4dd0e1', description: '"读书人的事，能算偷么？"', isPermanent: true },
+  { id: 13, name: '林尼', title: '魔术师', emoji: '🎩', rarity: '★★★★', color: '#ce93d8', description: '"表演开始了，请睁大眼睛。"', isPermanent: true },
+  // 常驻三星
+  { id: 8, name: '大便', title: '厕所里的', emoji: '💩', rarity: '★★★', color: '#3e2723', description: '"！？区区？！"', isPermanent: true },
+  // ===== 限定五星角色 =====
+  { id: 9, name: '钟离', title: '岩神 · 契约', emoji: '🗿', rarity: '★★★★★', color: '#ffb300', description: '"我虽无意逐鹿，却知苍生苦楚。"', isPermanent: false },
+  { id: 10, name: '胡桃', title: '往生堂 · 堂主', emoji: '🔥', rarity: '★★★★★', color: '#ff6b6b', description: '"客官，往生堂了解一下？"', isPermanent: false },
+  { id: 11, name: '甘雨', title: '璃月·七星秘书', emoji: '🌿', rarity: '★★★★★', color: '#66bb6a', description: '"为了璃月，我愿意付出一切。"', isPermanent: false },
+  
+  // ===== 限定四星角色（在卡池中指定） =====
+  // 注意：这些角色在全局中 isPermanent 仍为 true，但在卡池中被标记为限定
+  // 我们在卡池中通过 fourStarIds 来指定哪些四星在该卡池中为限定
+];
+// ===== 卡池定义 =====
+// ✅ 新增 fourStarIds 字段：指定该卡池的限定四星角色
+const POOLS = [
   {
-    id: 1,
-    name: '芙宁娜',
-    title: '水神 · 审判',
-    emoji: '👑',
-    rarity: '★★★★★',
-    color: '#ffd700',
-    description: '"罪人舞步旋，水神之审判永不停歇。"',
-  },
-  {
-    id: 2,
-    name: '那维莱特',
-    title: '最高审判官',
-    emoji: '⚖️',
-    rarity: '★★★★★',
-    color: '#4fc3f7',
-    description: '"枫丹的律法，便是我的意志。"',
-  },
-  {
-    id: 3,
-    name: '琳妮特',
-    title: '魔术助手',
-    emoji: '🎭',
-    rarity: '★★★★',
-    color: '#81d4fa',
-    description: '"魔术的精髓在于优雅。"',
-  },
-  {
-    id: 4,
-    name: '菲米尼',
-    title: '潜水员',
-    emoji: '🐧',
-    rarity: '★★★★',
-    color: '#80cbc4',
-    description: '"海露的深处，藏着秘密。"',
-  },
-  {
-    id: 5,
-    name: '林尼',
-    title: '魔术师',
-    emoji: '🎩',
-    rarity: '★★★★',
-    color: '#ce93d8',
-    description: '"表演开始了，请睁大眼睛。"',
-  },
-  {
-    id: 6,
-    name: '娜维娅',
-    title: '刺玫会会长',
-    emoji: '🌹',
-    rarity: '★★★★★',
-    color: '#ffb74d',
-    description: '"刺玫会的大门永远为你敞开。"',
-  },
-  {
-    id: 7,
-    name: '克洛琳德',
-    title: '决斗代理人',
-    emoji: '⚔️',
-    rarity: '★★★★',
-    color: '#a1887f',
-    description: '"决斗的规则，由我来定。"',
-  },
-  {
-    id: 8,
-    name: '水史莱姆',
-    title: '普通怪物',
-    emoji: '💧',
-    rarity: '★★★',
-    color: '#4dd0e1',
-    description: '"咕噜咕噜..."',
-  },
-  {
-    id: 9,
-    name: '芙卡洛斯',
-    title: '水神 · 原初',
-    emoji: '🌟',
-    rarity: '★★★★★',
-    color: '#ff6b6b',
-    description: '"她真的很了不起，这五百年来..."',
+    id: 'test',
+    name: '测试卡池',
+    fiveStarIds: [1,7,9],          // 暂无五星限定
+    fourStarIds: [3,4,12],          // 暂无四星限定
   },
 ];
+
+// 将限定四星角色添加到全局角色库中（但标记为常驻，在卡池中通过 fourStarIds 指定）
+// 注意：这些角色在全局中 isPermanent: true，但在抽卡时会被识别为限定
+ALL_CHARACTERS.push(
+  
+);
+
+// ===== 辅助函数 =====
+const getCharacterById = (id) => ALL_CHARACTERS.find(c => c.id === id);
+
+const getPermanentByRarity = (rarity) => ALL_CHARACTERS.filter(c => c.isPermanent && c.rarity === rarity);
+
+// ✅ 获取当前卡池的限定五星角色
+const getPoolFiveStarExclusive = (poolId) => {
+  const pool = POOLS.find(p => p.id === poolId);
+  if (!pool) return [];
+  return pool.fiveStarIds.map(id => getCharacterById(id)).filter(c => c && c.rarity === '★★★★★');
+};
+
+// ✅ 获取当前卡池的限定四星角色
+const getPoolFourStarExclusive = (poolId) => {
+  const pool = POOLS.find(p => p.id === poolId);
+  if (!pool) return [];
+  return pool.fourStarIds.map(id => getCharacterById(id)).filter(c => c && c.rarity === '★★★★');
+};
+
+// ✅ 获取当前卡池的限定角色（用于预览）
+const getPoolExclusive = (poolId) => {
+  const pool = POOLS.find(p => p.id === poolId);
+  if (!pool) return [];
+  const all = [];
+  pool.fiveStarIds.forEach(id => { const c = getCharacterById(id); if (c) all.push(c); });
+  pool.fourStarIds.forEach(id => { const c = getCharacterById(id); if (c) all.push(c); });
+  return all;
+};
+
+// ✅ 获取当前卡池的限定角色（按星级分组）
+const getPoolExclusiveByRarity = (poolId, rarity) => {
+  if (rarity === '★★★★★') {
+    return getPoolFiveStarExclusive(poolId);
+  } else if (rarity === '★★★★') {
+    return getPoolFourStarExclusive(poolId);
+  }
+  return [];
+};
 
 // 全局粒子数组
 let particles = [];
 let animationId = null;
 
-// ===== 统一使用金色 =====
 const getStarColors = (stars) => {
   return {
     primary: '#ffd700',
@@ -104,34 +101,35 @@ const getStarColors = (stars) => {
 };
 
 export default function GachaPage() {
+  const [currentPoolId, setCurrentPoolId] = useState(POOLS[0].id);
+  const exclusiveCharacters = getPoolExclusive(currentPoolId);
+  
   const [currentCard, setCurrentCard] = useState(null);
   const [history, setHistory] = useState([]);
   const [isDrawing, setIsDrawing] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [showHistory, setShowHistory] = useState(false);
   
-  // ===== 保底相关状态 =====
+  // 保底相关
   const [pityCounter, setPityCounter] = useState(0);
   const [totalPulls, setTotalPulls] = useState(0);
   const [pullsSinceFiveStar, setPullsSinceFiveStar] = useState(0);
-  
-  // ===== 四星保底状态（独立） =====
   const [fourStarPityCounter, setFourStarPityCounter] = useState(0);
   
-  // ===== 十连相关状态 =====
+  // 大保底状态（独立）
+  const [lastFiveStarIsPermanent, setLastFiveStarIsPermanent] = useState(false);
+  const [lastFourStarIsPermanent, setLastFourStarIsPermanent] = useState(false);
+  
+  // 十连相关
   const [isTenPull, setIsTenPull] = useState(false);
   const [tenPullResults, setTenPullResults] = useState([]);
-  
-  // ===== 出金闪光状态 =====
   const [goldenFlash, setGoldenFlash] = useState(false);
   const [isFiveStar, setIsFiveStar] = useState(false);
-  
-  // ===== 五星逐张展示状态 =====
   const [fiveStarCards, setFiveStarCards] = useState([]);
   const [currentFiveStarIndex, setCurrentFiveStarIndex] = useState(-1);
   const [isFiveStarRevealMode, setIsFiveStarRevealMode] = useState(false);
   
-  // 动画阶段控制
+  // 动画阶段
   const [phase, setPhase] = useState('idle');
   const [previewEmoji, setPreviewEmoji] = useState('✨');
   const [showCloseBtn, setShowCloseBtn] = useState(false);
@@ -148,7 +146,6 @@ export default function GachaPage() {
   const RECENT_FIVE_STAR_BONUS_RATE = 0.3;
   const RECENT_FIVE_STAR_WINDOW = 20;
 
-  // ===== 计算实际五星概率 =====
   const getFiveStarRate = (pity, pullsSinceFive) => {
     if (pity >= HARD_PITY) return 100;
     let rate = FIVE_STAR_BASE_RATE;
@@ -166,7 +163,355 @@ export default function GachaPage() {
     return rate;
   };
 
-  // ===== 弹窗打开时禁用滚动（触屏优化） =====
+  // ===== ✅ 判断角色是否为当前卡池限定（四星或五星） =====
+  const isExclusiveInPool = (card, poolId) => {
+    if (!card) return false;
+    const pool = POOLS.find(p => p.id === poolId);
+    if (!pool) return false;
+    if (card.rarity === '★★★★★') {
+      return pool.fiveStarIds.includes(card.id);
+    } else if (card.rarity === '★★★★') {
+      return pool.fourStarIds.includes(card.id);
+    }
+    return false;
+  };
+
+  // ===== ✅ 判断角色是否为常驻（在当前卡池中） =====
+  const isPermanentInPool = (card, poolId) => {
+    return !isExclusiveInPool(card, poolId);
+  };
+
+  // ===== 单抽用：根据星级和各自保底状态选择角色 =====
+  const getCardByStarLevel = (starLevel, poolId, lastFive, lastFour) => {
+    const rarityMap = { 5: '★★★★★', 4: '★★★★', 3: '★★★' };
+    const targetRarity = rarityMap[starLevel];
+
+    // 三星：固定常驻
+    if (starLevel === 3) {
+      const permanentPool = getPermanentByRarity(targetRarity);
+      return permanentPool.length > 0 
+        ? permanentPool[Math.floor(Math.random() * permanentPool.length)]
+        : ALL_CHARACTERS.filter(c => c.isPermanent)[Math.floor(Math.random() * ALL_CHARACTERS.filter(c => c.isPermanent).length)];
+    }
+
+    // 四星或五星
+    const exclusivePool = getPoolExclusiveByRarity(poolId, targetRarity);
+    
+    // 如果当前卡池没有该星级限定，直接抽取常驻，且不触发大保底
+    if (exclusivePool.length === 0) {
+      const permanentPool = getPermanentByRarity(targetRarity);
+      const card = permanentPool.length > 0 
+        ? permanentPool[Math.floor(Math.random() * permanentPool.length)]
+        : ALL_CHARACTERS.filter(c => c.isPermanent)[Math.floor(Math.random() * ALL_CHARACTERS.filter(c => c.isPermanent).length)];
+      if (starLevel === 5) setLastFiveStarIsPermanent(false);
+      else if (starLevel === 4) setLastFourStarIsPermanent(false);
+      return card;
+    }
+
+    // 有专属角色，按规则抽取（各自独立）
+    let usePermanent = false;
+    if (starLevel === 5) {
+      if (lastFive === true) {
+        usePermanent = false; // 必出限定五星
+      } else {
+        usePermanent = Math.random() < 0.5;
+      }
+    } else { // 四星
+      if (lastFour === true) {
+        usePermanent = false; // 必出限定四星
+      } else {
+        usePermanent = Math.random() < 0.5;
+      }
+    }
+
+    let selectedCard = null;
+    if (usePermanent) {
+      // 抽取常驻
+      const permanentPool = getPermanentByRarity(targetRarity);
+      selectedCard = permanentPool.length > 0 
+        ? permanentPool[Math.floor(Math.random() * permanentPool.length)]
+        : ALL_CHARACTERS.filter(c => c.isPermanent)[Math.floor(Math.random() * ALL_CHARACTERS.filter(c => c.isPermanent).length)];
+      if (starLevel === 5) setLastFiveStarIsPermanent(true);
+      else if (starLevel === 4) setLastFourStarIsPermanent(true);
+    } else {
+      // 抽取限定
+      selectedCard = exclusivePool[Math.floor(Math.random() * exclusivePool.length)];
+      if (starLevel === 5) setLastFiveStarIsPermanent(false);
+      else if (starLevel === 4) setLastFourStarIsPermanent(false);
+    }
+
+    return selectedCard || ALL_CHARACTERS[0];
+  };
+
+  // ===== 纯函数版本（十连用） =====
+  const getCardByStarLevelPure = (starLevel, poolId, lastFive, lastFour) => {
+    const rarityMap = { 5: '★★★★★', 4: '★★★★', 3: '★★★' };
+    const targetRarity = rarityMap[starLevel];
+
+    if (starLevel === 3) {
+      const permanentPool = getPermanentByRarity(targetRarity);
+      const card = permanentPool.length > 0 
+        ? permanentPool[Math.floor(Math.random() * permanentPool.length)]
+        : ALL_CHARACTERS.filter(c => c.isPermanent)[Math.floor(Math.random() * ALL_CHARACTERS.filter(c => c.isPermanent).length)];
+      return { card, isPermanent: false };
+    }
+
+    const exclusivePool = getPoolExclusiveByRarity(poolId, targetRarity);
+    if (exclusivePool.length === 0) {
+      const permanentPool = getPermanentByRarity(targetRarity);
+      const card = permanentPool.length > 0 
+        ? permanentPool[Math.floor(Math.random() * permanentPool.length)]
+        : ALL_CHARACTERS.filter(c => c.isPermanent)[Math.floor(Math.random() * ALL_CHARACTERS.filter(c => c.isPermanent).length)];
+      return { card, isPermanent: false };
+    }
+
+    let usePermanent = false;
+    if (starLevel === 5) {
+      if (lastFive === true) {
+        usePermanent = false;
+      } else {
+        usePermanent = Math.random() < 0.5;
+      }
+    } else { // 四星
+      if (lastFour === true) {
+        usePermanent = false;
+      } else {
+        usePermanent = Math.random() < 0.5;
+      }
+    }
+
+    let card = null;
+    let isPermanentFlag = false;
+    if (usePermanent) {
+      const permanentPool = getPermanentByRarity(targetRarity);
+      card = permanentPool.length > 0 
+        ? permanentPool[Math.floor(Math.random() * permanentPool.length)]
+        : ALL_CHARACTERS.filter(c => c.isPermanent)[Math.floor(Math.random() * ALL_CHARACTERS.filter(c => c.isPermanent).length)];
+      isPermanentFlag = true;
+    } else {
+      card = exclusivePool[Math.floor(Math.random() * exclusivePool.length)];
+      isPermanentFlag = false;
+    }
+
+    return { card: card || ALL_CHARACTERS[0], isPermanent: isPermanentFlag };
+  };
+
+  // ===== 单抽逻辑 =====
+  const drawCard = () => {
+    if (isDrawing) return;
+    setIsDrawing(true);
+    setIsTenPull(false);
+    setTenPullResults([]);
+    setIsFiveStarRevealMode(false);
+    setFiveStarCards([]);
+
+    const fiveStarRate = getFiveStarRate(pityCounter, pullsSinceFiveStar);
+    const roll = Math.random() * 100;
+    let starLevel;
+    let isFiveStarResult = false;
+
+    if (roll < fiveStarRate || pityCounter >= HARD_PITY) {
+      starLevel = 5;
+      isFiveStarResult = true;
+      setPullsSinceFiveStar(0);
+      setPityCounter(0);
+      setFourStarPityCounter(0);
+    } else {
+      setPityCounter(prev => prev + 1);
+      setPullsSinceFiveStar(prev => prev + 1);
+      
+      const isFourStarGuaranteed = fourStarPityCounter >= FOUR_STAR_HARD_PITY - 1;
+      if (isFourStarGuaranteed) {
+        starLevel = 4;
+        setFourStarPityCounter(0);
+      } else if (roll < fiveStarRate + FOUR_STAR_BASE_RATE) {
+        starLevel = 4;
+        setFourStarPityCounter(0);
+      } else {
+        starLevel = 3;
+        setFourStarPityCounter(prev => prev + 1);
+      }
+    }
+
+    setTotalPulls(prev => prev + 1);
+
+    const card = getCardByStarLevel(starLevel, currentPoolId, lastFiveStarIsPermanent, lastFourStarIsPermanent);
+
+    setCurrentCard(card);
+    const scheme = getStarColors(card.rarity);
+    setCurrentStarScheme(scheme);
+    setHistory(prev => [card, ...prev].slice(0, 20));
+    setIsFiveStar(isFiveStarResult);
+
+    setPhase('preview');
+    setShowCloseBtn(false);
+    setPreviewEmoji(card.emoji);
+    setIsOpen(true);
+    particles = [];
+    
+    if (isFiveStarResult) {
+      triggerGoldenFlash();
+      spawnParticles(100, true, scheme);
+      setTimeout(() => spawnParticles(60, true, scheme), 200);
+      setTimeout(() => spawnParticles(40, true, scheme), 400);
+    } else {
+      spawnParticles(40, false, scheme);
+    }
+    
+    setTimeout(() => {
+      setPhase('transition');
+      if (isFiveStarResult) {
+        spawnParticles(60, true, scheme);
+      } else {
+        spawnParticles(30, false, scheme);
+      }
+    }, 1500);
+    
+    setTimeout(() => {
+      setPhase('reveal');
+      setShowCloseBtn(true);
+      if (isFiveStarResult) {
+        spawnParticles(70, true, scheme);
+      } else {
+        spawnParticles(50, true, scheme);
+      }
+      setIsDrawing(false);
+    }, 2500);
+  };
+
+  // ===== 十连抽逻辑 =====
+  const drawTenCards = () => {
+    if (isDrawing) return;
+    setIsDrawing(true);
+    setIsTenPull(true);
+    setShowCloseBtn(false);
+    setIsFiveStarRevealMode(false);
+    setFiveStarCards([]);
+    setCurrentFiveStarIndex(-1);
+
+    const results = [];
+    let pity = pityCounter;
+    let pullsSinceFive = pullsSinceFiveStar;
+    let fourStarPity = fourStarPityCounter;
+    let fiveStarCount = 0;
+    let fourStarCount = 0;
+    const fiveStarList = [];
+
+    let localLastFive = lastFiveStarIsPermanent;
+    let localLastFour = lastFourStarIsPermanent;
+
+    for (let i = 0; i < 10; i++) {
+      const fiveStarRate = getFiveStarRate(pity, pullsSinceFive);
+      const roll = Math.random() * 100;
+      let starLevel;
+
+      if (roll < fiveStarRate || pity >= HARD_PITY) {
+        starLevel = 5;
+        fiveStarCount++;
+        pity = 0;
+        pullsSinceFive = 0;
+        fourStarPity = 0;
+      } else {
+        pity++;
+        pullsSinceFive++;
+        
+        const isFourStarGuaranteed = fourStarPity >= FOUR_STAR_HARD_PITY - 1;
+        if (isFourStarGuaranteed) {
+          starLevel = 4;
+          fourStarCount++;
+          fourStarPity = 0;
+        } else if (roll < fiveStarRate + FOUR_STAR_BASE_RATE) {
+          starLevel = 4;
+          fourStarCount++;
+          fourStarPity = 0;
+        } else {
+          starLevel = 3;
+          fourStarPity++;
+        }
+      }
+
+      const { card, isPermanent } = getCardByStarLevelPure(starLevel, currentPoolId, localLastFive, localLastFour);
+      
+      results.push(card);
+      if (starLevel === 5) {
+        fiveStarList.push(card);
+        localLastFive = isPermanent;
+      } else if (starLevel === 4) {
+        localLastFour = isPermanent;
+      }
+    }
+
+    setPityCounter(pity);
+    setPullsSinceFiveStar(pullsSinceFive);
+    setFourStarPityCounter(fourStarPity);
+    setLastFiveStarIsPermanent(localLastFive);
+    setLastFourStarIsPermanent(localLastFour);
+    setTotalPulls(prev => prev + 10);
+    setHistory(prev => [...results, ...prev].slice(0, 20));
+    setTenPullResults(results);
+
+    const hasFiveStar = results.some(c => c.rarity === '★★★★★');
+    setIsFiveStar(hasFiveStar);
+
+    if (hasFiveStar && fiveStarList.length > 0) {
+      setFiveStarCards(fiveStarList);
+      setCurrentFiveStarIndex(0);
+      setIsFiveStarRevealMode(true);
+      setShowCloseBtn(false);
+      
+      const firstCard = fiveStarList[0];
+      setCurrentCard(firstCard);
+      const scheme = getStarColors(firstCard.rarity);
+      setCurrentStarScheme(scheme);
+      setPreviewEmoji(firstCard.emoji);
+      setIsOpen(true);
+      particles = [];
+      
+      triggerGoldenFlash();
+      spawnParticles(120, true, scheme);
+      setTimeout(() => spawnParticles(80, true, scheme), 200);
+      setTimeout(() => spawnParticles(50, true, scheme), 400);
+      
+      setPhase('preview');
+      setTimeout(() => setPhase('transition'), 1500);
+      setTimeout(() => {
+        setPhase('reveal');
+        setIsDrawing(false);
+      }, 2500);
+    } else {
+      const mainCard = results.find(c => c.rarity === '★★★★') || results[0];
+      setCurrentCard(mainCard);
+      const scheme = getStarColors(mainCard.rarity);
+      setCurrentStarScheme(scheme);
+      setPreviewEmoji(mainCard.emoji);
+      setIsOpen(true);
+      particles = [];
+      spawnParticles(50, true, scheme);
+      
+      setPhase('preview');
+      setTimeout(() => setPhase('transition'), 1500);
+      setTimeout(() => {
+        setPhase('reveal');
+        setShowCloseBtn(true);
+        setIsDrawing(false);
+      }, 2500);
+    }
+  };
+
+  // ===== 触发金色闪光 =====
+  const triggerGoldenFlash = () => {
+    setGoldenFlash(true);
+    setTimeout(() => setGoldenFlash(false), 800);
+  };
+
+  // ===== 切换卡池 =====
+  const handlePoolChange = (poolId) => {
+    if (isDrawing) return;
+    setCurrentPoolId(poolId);
+    closeCard();
+  };
+
+  // ===== 弹窗滚动禁用 =====
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = 'hidden';
@@ -181,7 +526,7 @@ export default function GachaPage() {
     };
   }, [isOpen]);
 
-  // 金色粒子Canvas
+  // ===== 粒子Canvas =====
   useEffect(() => {
     const canvas = document.createElement('canvas');
     canvas.id = 'golden-particles-canvas';
@@ -259,7 +604,7 @@ export default function GachaPage() {
     };
   }, []);
 
-  // 生成粒子
+  // ===== 生成粒子 =====
   const spawnParticles = (count = 60, isResult = false, colorScheme = null) => {
     const defaultColors = ['#ffd700', '#fff8dc', '#ffc107', '#ffffff', '#ffab00', '#ffd740'];
     const colors = colorScheme ? colorScheme.colors : defaultColors;
@@ -286,229 +631,12 @@ export default function GachaPage() {
     }
   };
 
-  // ===== 触发金色闪光 =====
-  const triggerGoldenFlash = () => {
-    setGoldenFlash(true);
-    setTimeout(() => setGoldenFlash(false), 800);
-  };
-
-  // ===== 单抽逻辑 =====
-  const drawCard = () => {
-    if (isDrawing) return;
-    setIsDrawing(true);
-    setIsTenPull(false);
-    setTenPullResults([]);
-    setIsFiveStarRevealMode(false);
-    setFiveStarCards([]);
-
-    const fiveStarRate = getFiveStarRate(pityCounter, pullsSinceFiveStar);
-    const roll = Math.random() * 100;
-    
-    let starLevel;
-    let isFiveStarResult = false;
-    
-    if (roll < fiveStarRate || pityCounter >= HARD_PITY) {
-      starLevel = 5;
-      isFiveStarResult = true;
-      setPullsSinceFiveStar(0);
-      setPityCounter(0);
-      setFourStarPityCounter(0);
-    } else {
-      setPityCounter(prev => prev + 1);
-      setPullsSinceFiveStar(prev => prev + 1);
-      
-      const isFourStarGuaranteed = fourStarPityCounter >= FOUR_STAR_HARD_PITY - 1;
-      
-      if (isFourStarGuaranteed) {
-        starLevel = 4;
-        setFourStarPityCounter(0);
-      } else if (roll < fiveStarRate + FOUR_STAR_BASE_RATE) {
-        starLevel = 4;
-        setFourStarPityCounter(0);
-      } else {
-        starLevel = 3;
-        setFourStarPityCounter(prev => prev + 1);
-      }
-    }
-
-    setTotalPulls(prev => prev + 1);
-
-    const starMap = { 5: '★★★★★', 4: '★★★★', 3: '★★★' };
-    const targetRarity = starMap[starLevel];
-    const filtered = CARDS.filter(c => c.rarity === targetRarity);
-    const card = filtered.length > 0 
-      ? filtered[Math.floor(Math.random() * filtered.length)]
-      : CARDS[Math.floor(Math.random() * CARDS.length)];
-
-    setCurrentCard(card);
-    const scheme = getStarColors(card.rarity);
-    setCurrentStarScheme(scheme);
-    setHistory(prev => [card, ...prev].slice(0, 20));
-    setIsFiveStar(isFiveStarResult);
-
-    setPhase('preview');
-    setShowCloseBtn(false);
-    setPreviewEmoji(card.emoji);
-    setIsOpen(true);
-    particles = [];
-    
-    if (isFiveStarResult) {
-      triggerGoldenFlash();
-      spawnParticles(100, true, scheme);
-      setTimeout(() => spawnParticles(60, true, scheme), 200);
-      setTimeout(() => spawnParticles(40, true, scheme), 400);
-    } else {
-      spawnParticles(40, false, scheme);
-    }
-    
-    setTimeout(() => {
-      setPhase('transition');
-      if (isFiveStarResult) {
-        spawnParticles(60, true, scheme);
-      } else {
-        spawnParticles(30, false, scheme);
-      }
-    }, 1500);
-    
-    setTimeout(() => {
-      setPhase('reveal');
-      setShowCloseBtn(true);
-      if (isFiveStarResult) {
-        spawnParticles(70, true, scheme);
-      } else {
-        spawnParticles(50, true, scheme);
-      }
-      setIsDrawing(false);
-    }, 2500);
-  };
-
-  // ===== 十连抽逻辑 =====
-  const drawTenCards = () => {
-    if (isDrawing) return;
-    setIsDrawing(true);
-    setIsTenPull(true);
-    setShowCloseBtn(false);
-    setIsFiveStarRevealMode(false);
-    setFiveStarCards([]);
-    setCurrentFiveStarIndex(-1);
-
-    const results = [];
-    let pity = pityCounter;
-    let pullsSinceFive = pullsSinceFiveStar;
-    let fourStarPity = fourStarPityCounter;
-    let fiveStarCount = 0;
-    let fourStarCount = 0;
-    const fiveStarList = [];
-
-    for (let i = 0; i < 10; i++) {
-      const fiveStarRate = getFiveStarRate(pity, pullsSinceFive);
-      const roll = Math.random() * 100;
-      
-      let starLevel;
-      
-      if (roll < fiveStarRate || pity >= HARD_PITY) {
-        starLevel = 5;
-        fiveStarCount++;
-        pity = 0;
-        pullsSinceFive = 0;
-        fourStarPity = 0;
-      } else {
-        pity++;
-        pullsSinceFive++;
-        
-        const isFourStarGuaranteed = fourStarPity >= FOUR_STAR_HARD_PITY - 1;
-        
-        if (isFourStarGuaranteed) {
-          starLevel = 4;
-          fourStarCount++;
-          fourStarPity = 0;
-        } else if (roll < fiveStarRate + FOUR_STAR_BASE_RATE) {
-          starLevel = 4;
-          fourStarCount++;
-          fourStarPity = 0;
-        } else {
-          starLevel = 3;
-          fourStarPity++;
-        }
-      }
-
-      const starMap = { 5: '★★★★★', 4: '★★★★', 3: '★★★' };
-      const targetRarity = starMap[starLevel];
-      const filtered = CARDS.filter(c => c.rarity === targetRarity);
-      const card = filtered.length > 0 
-        ? filtered[Math.floor(Math.random() * filtered.length)]
-        : CARDS[Math.floor(Math.random() * CARDS.length)];
-      
-      results.push(card);
-      if (starLevel === 5) {
-        fiveStarList.push(card);
-      }
-    }
-
-    setPityCounter(pity);
-    setPullsSinceFiveStar(pullsSinceFive);
-    setFourStarPityCounter(fourStarPity);
-    setTotalPulls(prev => prev + 10);
-    setHistory(prev => [...results, ...prev].slice(0, 20));
-    setTenPullResults(results);
-
-    const hasFiveStar = results.some(c => c.rarity === '★★★★★');
-    setIsFiveStar(hasFiveStar);
-
-    // ===== 如果有五星，进入逐张展示模式 =====
-    if (hasFiveStar && fiveStarList.length > 0) {
-      setFiveStarCards(fiveStarList);
-      setCurrentFiveStarIndex(0);
-      setIsFiveStarRevealMode(true);
-      setShowCloseBtn(false);
-      
-      const firstCard = fiveStarList[0];
-      setCurrentCard(firstCard);
-      const scheme = getStarColors(firstCard.rarity);
-      setCurrentStarScheme(scheme);
-      setPreviewEmoji(firstCard.emoji);
-      setIsOpen(true);
-      particles = [];
-      
-      triggerGoldenFlash();
-      spawnParticles(120, true, scheme);
-      setTimeout(() => spawnParticles(80, true, scheme), 200);
-      setTimeout(() => spawnParticles(50, true, scheme), 400);
-      
-      setPhase('preview');
-      setTimeout(() => setPhase('transition'), 1500);
-      setTimeout(() => {
-        setPhase('reveal');
-        setIsDrawing(false);
-      }, 2500);
-    } else {
-      // 没有五星，正常显示
-      const mainCard = results.find(c => c.rarity === '★★★★') || results[0];
-      setCurrentCard(mainCard);
-      const scheme = getStarColors(mainCard.rarity);
-      setCurrentStarScheme(scheme);
-      setPreviewEmoji(mainCard.emoji);
-      setIsOpen(true);
-      particles = [];
-      spawnParticles(50, true, scheme);
-      
-      setPhase('preview');
-      setTimeout(() => setPhase('transition'), 1500);
-      setTimeout(() => {
-        setPhase('reveal');
-        setShowCloseBtn(true);
-        setIsDrawing(false);
-      }, 2500);
-    }
-  };
-
-  // ===== 点击卡片继续下一张（支持触屏） =====
+  // ===== 点击卡片继续 =====
   const handleCardClick = (e) => {
-    // 支持触屏事件
-    if (e && e.type === 'touchend') {
+    if (e) {
       e.preventDefault();
+      e.stopPropagation();
     }
-    
     if (!isFiveStarRevealMode) return;
     if (phase !== 'reveal') return;
     if (isDrawing) return;
@@ -536,7 +664,6 @@ export default function GachaPage() {
         setIsDrawing(false);
       }, 2000);
     } else {
-      // 所有五星展示完毕，显示完整十连结果
       setIsFiveStarRevealMode(false);
       setShowCloseBtn(true);
       setFiveStarCards([]);
@@ -575,6 +702,8 @@ export default function GachaPage() {
       setPityCounter(0);
       setPullsSinceFiveStar(0);
       setFourStarPityCounter(0);
+      setLastFiveStarIsPermanent(false);
+      setLastFourStarIsPermanent(false);
       setTenPullResults([]);
       setIsFiveStar(false);
       setIsFiveStarRevealMode(false);
@@ -583,7 +712,7 @@ export default function GachaPage() {
     }
   };
 
-  // ===== 渲染不同阶段内容 =====
+  // ===== 渲染内容 =====
   const renderContent = () => {
     if (!currentCard) return null;
 
@@ -684,10 +813,10 @@ export default function GachaPage() {
               ? `0 0 80px rgba(255,215,0,0.6), 0 0 160px rgba(255,215,0,0.2)` 
               : `0 0 80px ${currentCard.color}60` 
           }}
-          onClick={isInRevealMode ? handleCardClick : undefined}
-          onTouchEnd={isInRevealMode ? handleCardClick : undefined}
+          onPointerDown={isInRevealMode ? handleCardClick : undefined}
           style={{ 
             cursor: isInRevealMode ? 'pointer' : 'default',
+            touchAction: isInRevealMode ? 'manipulation' : 'auto',
             borderColor: isFiveStarCard ? '#ffd700' : currentCard.color, 
             boxShadow: isFiveStarCard 
               ? `0 0 80px rgba(255,215,0,0.6), 0 0 160px rgba(255,215,0,0.2)` 
@@ -704,12 +833,10 @@ export default function GachaPage() {
           <div className={styles.cardTitle}>{currentCard.title}</div>
           <div className={styles.cardDescription}>"{currentCard.description}"</div>
           
-          {/* 逐张展示模式：显示点击提示 */}
           {isInRevealMode && (
             <div className={styles.clickHint}>✨ 点击继续 ✨</div>
           )}
           
-          {/* 非逐张展示模式：显示完整十连列表 */}
           {!isInRevealMode && isTenPull && tenPullResults.length > 1 && (
             <div className={styles.tenPullList}>
               {tenPullResults.map((card, idx) => (
@@ -751,6 +878,19 @@ export default function GachaPage() {
           <p className={styles.subtitle}>
             以水神之名，抽取属于你的枫丹角色
           </p>
+        </div>
+
+        <div className={styles.poolSelector}>
+          {POOLS.map(pool => (
+            <button
+              key={pool.id}
+              className={`${styles.poolButton} ${currentPoolId === pool.id ? styles.poolButtonActive : ''}`}
+              onClick={() => handlePoolChange(pool.id)}
+              disabled={isDrawing}
+            >
+              {pool.name}
+            </button>
+          ))}
         </div>
 
         <div className={styles.gachaContainer}>
@@ -821,17 +961,26 @@ export default function GachaPage() {
         </div>
 
         <div className={styles.previewSection}>
-          <h3 className={styles.previewTitle}>✦ 可获得的角色 ✦</h3>
+          <h3 className={styles.previewTitle}>
+            ✦ 当前卡池专属角色 ({exclusiveCharacters.length}) ✦
+          </h3>
           <div className={styles.previewGrid}>
-            {CARDS.map(card => (
-              <div key={card.id} className={styles.previewCard}>
-                <div className={styles.previewEmoji}>{card.emoji}</div>
-                <div className={styles.previewName} style={{ color: card.color }}>
-                  {card.name}
+            {exclusiveCharacters.length > 0 ? (
+              exclusiveCharacters.map(card => (
+                <div key={card.id} className={styles.previewCard}>
+                  <div className={styles.previewEmoji}>{card.emoji}</div>
+                  <div className={styles.previewName} style={{ color: card.color }}>
+                    {card.name}
+                  </div>
+                  <div className={styles.previewRarity}>{card.rarity}</div>
                 </div>
-                <div className={styles.previewRarity}>{card.rarity}</div>
-              </div>
-            ))}
+              ))
+            ) : (
+              <div className={styles.emptyPreview}>该卡池暂无专属角色</div>
+            )}
+          </div>
+          <div className={styles.permanentHint}>
+            ⭐ 三星及大部分四星/五星角色来自常驻池
           </div>
         </div>
       </div>
