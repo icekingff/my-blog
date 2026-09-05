@@ -23,7 +23,6 @@ const ALL_CHARACTERS = [
   { id: 9, name: '钟离', title: '岩神 · 契约', emoji: '🗿', rarity: '★★★★★', color: '#ffb300', description: '"我虽无意逐鹿，却知苍生苦楚。"', isPermanent: false },
   { id: 10, name: '胡桃', title: '往生堂 · 堂主', emoji: '🔥', rarity: '★★★★★', color: '#ff6b6b', description: '"客官，往生堂了解一下？"', isPermanent: false },
   { id: 11, name: '甘雨', title: '璃月·七星秘书', emoji: '🌿', rarity: '★★★★★', color: '#66bb6a', description: '"为了璃月，我愿意付出一切。"', isPermanent: false },
-  
   // ===== 限定四星角色（在卡池中指定） =====
   // 注意：这些角色在全局中 isPermanent 仍为 true，但在卡池中被标记为限定
   // 我们在卡池中通过 fourStarIds 来指定哪些四星在该卡池中为限定
