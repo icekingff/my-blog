@@ -1,5 +1,5 @@
 ---
-title: Prosti
+title: (COCI 2015/2016 7) Prosti
 date: 2026-9-4
 tags: [数学,COCI,题解,普及+/提高-]
 ---
