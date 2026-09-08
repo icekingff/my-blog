@@ -65,8 +65,8 @@ COCI:
 提高+/省选-:
   label: '提高+/省选-'
 
-省选+/NOI-:
-  label: '省选+/NOI-'
+省选/NOI-:
+  label: '省选/NOI-'
 
 NOI/NOI+/CTS:
   label: 'NOI/NOI+/CTS'
@@ -118,3 +118,6 @@ LCA:
 
 数学:
   label: '数学'
+
+深度优先搜索DFS:
+  label: '深度优先搜索DFS'
