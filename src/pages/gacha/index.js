@@ -4,41 +4,24 @@ import styles from './index.module.css';
 
 // ===== 角色库 =====
 const ALL_CHARACTERS = [
-  // 常驻五星
-  { id: 1, name: '芙宁娜', title: '水神 · 审判', image: '/img/characters/furina.png', rarity: '★★★★★', color: '#ffd700', description: '"罪人舞步旋，水神之审判永不停歇。"', isPermanent: true },
-  // 常驻四星
-  { id: 3, name: '琳妮特', title: '魔术助手', image: '/img/characters/lynette.png', rarity: '★★★★', color: '#81d4fa', description: '"魔术的精髓在于优雅。"', isPermanent: true },
-  { id: 4, name: '菲米尼', title: '潜水员', image: '/img/characters/freminet.png', rarity: '★★★★', color: '#80cbc4', description: '"海露的深处，藏着秘密。"', isPermanent: true },
-  { id: 6, name: '克洛琳德', title: '决斗代理人', image: '/img/characters/clorinde.png', rarity: '★★★★', color: '#a1887f', description: '"决斗的规则，由我来定。"', isPermanent: true },
-  // 常驻三星
-  { id: 8, name: '史莱姆', title: '普通怪物', image: '/img/characters/slime.png', rarity: '★★★', color: '#3e2723', description: '"！？区区？！"', isPermanent: true },
-  // 限定五星
-  { id: 9, name: '钟离', title: '岩神 · 契约', image: '/img/characters/zhongli.png', rarity: '★★★★★', color: '#ffb300', description: '"我虽无意逐鹿，却知苍生苦楚。"', isPermanent: false },
-  { id: 10, name: '胡桃', title: '往生堂 · 堂主', image: '/img/characters/hutao.png', rarity: '★★★★★', color: '#ff6b6b', description: '"客官，往生堂了解一下？"', isPermanent: false },
-  { id: 11, name: '甘雨', title: '璃月·七星秘书', image: '/img/characters/ganyu.png', rarity: '★★★★★', color: '#66bb6a', description: '"为了璃月，我愿意付出一切。"', isPermanent: false },
-  // 限定四星
-  { id: 12, name: '行秋', title: '飞云商会二少爷', image: '/img/characters/xingqiu.png', rarity: '★★★★', color: '#4dd0e1', description: '"读书人的事，能算偷么？"', isPermanent: true },
-  { id: 13, name: '林尼', title: '魔术师', image: '/img/characters/lyney.png', rarity: '★★★★', color: '#ce93d8', description: '"表演开始了，请睁大眼睛。"', isPermanent: true },
-  { id: 14, name: '七七', title: '僵尸 · 采药', image: '/img/characters/qiqi.png', rarity: '★★★★★', color: '#80cbc4', description: '"我...是七七..."', isPermanent: false },
+  { id: 1, name: '芙宁娜', title: '水神 · 审判', image: '/img/characters/furina.png', imagePosition: 'center 30%', rarity: '★★★★★', color: '#ffd700', description: '"罪人舞步旋，水神之审判永不停歇。"', isPermanent: true },
+  { id: 3, name: '琳妮特', title: '魔术助手', image: '/img/characters/lynette.png', imagePosition: 'center 25%', rarity: '★★★★', color: '#81d4fa', description: '"魔术的精髓在于优雅。"', isPermanent: true },
+  { id: 4, name: '菲米尼', title: '潜水员', image: '/img/characters/freminet.png', imagePosition: 'center 25%', rarity: '★★★★', color: '#80cbc4', description: '"海露的深处，藏着秘密。"', isPermanent: true },
+  { id: 6, name: '克洛琳德', title: '决斗代理人', image: '/img/characters/clorinde.png', imagePosition: 'center 25%', rarity: '★★★★', color: '#a1887f', description: '"决斗的规则，由我来定。"', isPermanent: true },
+  { id: 8, name: '史莱姆', title: '普通怪物', image: '/img/characters/slime.png', imagePosition: 'center 50%', rarity: '★★★', color: '#3e2723', description: '"！？区区？！"', isPermanent: true },
+  { id: 9, name: '钟离', title: '岩神 · 契约', image: '/img/characters/zhongli.png', imagePosition: 'center 30%', rarity: '★★★★★', color: '#ffb300', description: '"我虽无意逐鹿，却知苍生苦楚。"', isPermanent: false },
+  { id: 10, name: '胡桃', title: '往生堂 · 堂主', image: '/img/characters/hutao.png', imagePosition: 'center 20%', rarity: '★★★★★', color: '#ff6b6b', description: '"客官，往生堂了解一下？"', isPermanent: false },
+  { id: 11, name: '甘雨', title: '璃月·七星秘书', image: '/img/characters/ganyu.png', imagePosition: 'center 25%', rarity: '★★★★★', color: '#66bb6a', description: '"为了璃月，我愿意付出一切。"', isPermanent: false },
+  { id: 12, name: '行秋', title: '飞云商会二少爷', image: '/img/characters/xingqiu.png', imagePosition: 'center 25%', rarity: '★★★★', color: '#4dd0e1', description: '"读书人的事，能算偷么？"', isPermanent: true },
+  { id: 13, name: '林尼', title: '魔术师', image: '/img/characters/lyney.png', imagePosition: 'center 25%', rarity: '★★★★', color: '#ce93d8', description: '"表演开始了，请睁大眼睛。"', isPermanent: true },
+  { id: 14, name: '七七', title: '僵尸 · 采药', image: '/img/characters/qiqi.png', imagePosition: 'center 25%', rarity: '★★★★★', color: '#80cbc4', description: '"我...是七七..."', isPermanent: false },
 ];
 
-// ===== 卡池定义 =====
 const POOLS = [
-  {
-    id: 'pool_liyue',
-    name: '璃月祈愿',
-    fiveStarIds: [9, 10, 11, 14],
-    fourStarIds: [12, 13],
-  },
-  {
-    id: 'pool_fontaine',
-    name: '枫丹祈愿',
-    fiveStarIds: [],
-    fourStarIds: [],
-  },
+  { id: 'pool_liyue', name: '璃月祈愿', fiveStarIds: [9, 10, 11, 14], fourStarIds: [12, 13] },
+  { id: 'pool_fontaine', name: '枫丹祈愿', fiveStarIds: [], fourStarIds: [] },
 ];
 
-// ===== 辅助函数 =====
 const getCharacterById = (id) => ALL_CHARACTERS.find(c => c.id === id);
 const getPermanentByRarity = (rarity) => ALL_CHARACTERS.filter(c => c.isPermanent && c.rarity === rarity);
 const getPoolFiveStarExclusive = (poolId) => {
@@ -68,13 +51,11 @@ export default function GachaPage() {
   const [currentPoolId, setCurrentPoolId] = useState(POOLS[0].id);
   const exclusiveCharacters = getPoolExclusive(currentPoolId);
   
-  // 状态
   const [history, setHistory] = useState([]);
   const [isDrawing, setIsDrawing] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [showHistory, setShowHistory] = useState(false);
   
-  // 保底
   const [pityCounter, setPityCounter] = useState(0);
   const [totalPulls, setTotalPulls] = useState(0);
   const [pullsSinceFiveStar, setPullsSinceFiveStar] = useState(0);
@@ -82,19 +63,17 @@ export default function GachaPage() {
   const [lastFiveStarIsPermanent, setLastFiveStarIsPermanent] = useState(false);
   const [lastFourStarIsPermanent, setLastFourStarIsPermanent] = useState(false);
   
-  // 抽卡结果
   const [drawResults, setDrawResults] = useState([]);
   const [drawMode, setDrawMode] = useState('single');
-  const [showMode, setShowMode] = useState('one-by-one');
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isRevealMode, setIsRevealMode] = useState(false);
   const [showResult, setShowResult] = useState(false);
   
-  // 动画
+  const [isFlipping, setIsFlipping] = useState(false);
+  
   const [phase, setPhase] = useState('idle');
   const [goldenFlash, setGoldenFlash] = useState(false);
 
-  // 概率配置
   const FIVE_STAR_BASE_RATE = 0.6;
   const FOUR_STAR_BASE_RATE = 5.0;
   const HARD_PITY = 80;
@@ -121,7 +100,6 @@ export default function GachaPage() {
     return rate;
   };
 
-  // ===== 纯函数：抽一张卡 =====
   const drawOneCard = (starLevel, poolId, lastFive, lastFour) => {
     const rarityMap = { 5: '★★★★★', 4: '★★★★', 3: '★★★' };
     const targetRarity = rarityMap[starLevel];
@@ -158,7 +136,6 @@ export default function GachaPage() {
     return { card, isPermanent: usePermanent };
   };
 
-  // ===== 抽卡逻辑 =====
   const doDraw = (count) => {
     if (isDrawing) return;
     setIsDrawing(true);
@@ -218,12 +195,13 @@ export default function GachaPage() {
     setHistory(prev => [...results, ...prev].slice(0, 50));
     setDrawResults(results);
     
+    // ✅ 大幅减少粒子数量
     const hasFiveStar = results.some(c => c.rarity === '★★★★★');
     if (hasFiveStar) {
       triggerGoldenFlash();
-      spawnParticles(80, true);
+      spawnParticles(30, true);
     } else {
-      spawnParticles(40, false);
+      spawnParticles(15, false);
     }
     
     setTimeout(() => {
@@ -232,15 +210,17 @@ export default function GachaPage() {
       setIsRevealMode(true);
       setIsOpen(true);
       setIsDrawing(false);
-    }, 1200);
+      setIsFlipping(true);
+      setTimeout(() => setIsFlipping(false), 500);
+    }, 1000);
   };
 
   const triggerGoldenFlash = () => {
     setGoldenFlash(true);
-    setTimeout(() => setGoldenFlash(false), 1000);
+    setTimeout(() => setGoldenFlash(false), 800);
   };
 
-  // ===== 粒子系统 =====
+  // ===== ✅ 优化后的粒子系统 =====
   useEffect(() => {
     const canvas = document.createElement('canvas');
     canvas.id = 'gacha-particles';
@@ -248,45 +228,68 @@ export default function GachaPage() {
     document.body.appendChild(canvas);
     const ctx = canvas.getContext('2d');
     
-    const resize = () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; };
+    const resize = () => { 
+      canvas.width = window.innerWidth; 
+      canvas.height = window.innerHeight; 
+    };
     resize();
     window.addEventListener('resize', resize);
     
-    const animate = () => {
+    let lastTime = 0;
+    const animate = (time) => {
+      // ✅ 限制帧率为 30fps，减少 CPU/GPU 压力
+      if (time - lastTime < 33) {
+        animationId = requestAnimationFrame(animate);
+        return;
+      }
+      lastTime = time;
+      
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       particles = particles.filter(p => p.life > 0);
+      
+      // ✅ 限制同时存在的粒子数
+      if (particles.length > 80) {
+        particles = particles.slice(-80);
+      }
+      
       particles.forEach(p => {
-        p.x += p.vx; p.y += p.vy; p.vy += 0.05; p.life -= p.decay; p.size *= 0.998;
+        p.x += p.vx; 
+        p.y += p.vy; 
+        p.vy += 0.08;      // ✅ 加快重力，粒子更快消失
+        p.life -= p.decay; 
+        p.size *= 0.99;    // ✅ 加快缩小
+        
         const alpha = Math.max(0, p.life);
-        ctx.save();
         ctx.globalAlpha = alpha;
-        ctx.shadowColor = p.color;
-        ctx.shadowBlur = 20;
-        ctx.beginPath();
+        ctx.fillStyle = p.color;
+        
+        // ✅ 简化绘制：去掉 shadowBlur（最耗性能的部分）
         if (p.isStar) {
           const s = p.size;
+          ctx.save();
           ctx.translate(p.x, p.y);
           ctx.rotate(p.rotation || 0);
-          for (let i = 0; i < 5; i++) {
-            const a = (i / 5) * Math.PI * 2 - Math.PI / 2;
+          ctx.beginPath();
+          for (let i = 0; i < 4; i++) {
+            const a = (i / 4) * Math.PI * 2;
             ctx.lineTo(Math.cos(a) * s, Math.sin(a) * s);
-            const a2 = ((i + 0.5) / 5) * Math.PI * 2 - Math.PI / 2;
+            const a2 = ((i + 0.5) / 4) * Math.PI * 2;
             ctx.lineTo(Math.cos(a2) * s * 0.4, Math.sin(a2) * s * 0.4);
           }
           ctx.closePath();
-          ctx.fillStyle = p.color;
           ctx.fill();
           ctx.restore();
         } else {
+          ctx.beginPath();
           ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-          ctx.fillStyle = p.color;
           ctx.fill();
-          ctx.restore();
         }
       });
+      ctx.globalAlpha = 1;
+      
       animationId = requestAnimationFrame(animate);
     };
-    animate();
+    animationId = requestAnimationFrame(animate);
     
     return () => {
       cancelAnimationFrame(animationId);
@@ -298,39 +301,50 @@ export default function GachaPage() {
 
   const spawnParticles = (count, isFiveStar) => {
     const colors = isFiveStar
-      ? ['#ffd700', '#fff8dc', '#ffc107', '#ffffff', '#ffab00']
-      : ['#4fc3f7', '#81d4fa', '#b3e5fc', '#ffffff'];
+      ? ['#ffd700', '#fff8dc', '#ffc107', '#ffffff']
+      : ['#4fc3f7', '#81d4fa', '#b3e5fc'];
     for (let i = 0; i < count; i++) {
       const angle = Math.random() * Math.PI * 2;
-      const speed = (Math.random() * 200 + 50) * (isFiveStar ? 2 : 1.2);
+      const speed = (Math.random() * 150 + 40) * (isFiveStar ? 1.5 : 1);
       particles.push({
-        x: window.innerWidth / 2 + (Math.random() - 0.5) * 200,
-        y: window.innerHeight / 2 + (Math.random() - 0.5) * 200,
+        x: window.innerWidth / 2 + (Math.random() - 0.5) * 150,
+        y: window.innerHeight / 2 + (Math.random() - 0.5) * 150,
         vx: Math.cos(angle) * speed * (0.3 + Math.random() * 0.7),
-        vy: Math.sin(angle) * speed * (0.3 + Math.random() * 0.7) - 50,
-        size: Math.random() * (isFiveStar ? 12 : 6) + 3,
+        vy: Math.sin(angle) * speed * (0.3 + Math.random() * 0.7) - 40,
+        size: Math.random() * (isFiveStar ? 8 : 5) + 2,
         color: colors[Math.floor(Math.random() * colors.length)],
         life: 1,
-        decay: 0.005 + Math.random() * 0.01,
-        isStar: Math.random() > 0.5,
+        decay: 0.015 + Math.random() * 0.015,   // ✅ 更快衰减
+        isStar: Math.random() > 0.6,
         rotation: Math.random() * 360,
       });
     }
   };
 
-  // ===== 交互 =====
   const handleNext = () => {
+    if (isFlipping) return;
+    
     if (currentIndex < drawResults.length - 1) {
-      setCurrentIndex(currentIndex + 1);
+      setIsFlipping(true);
+      setTimeout(() => {
+        setCurrentIndex(currentIndex + 1);
+        setIsFlipping(false);
+        const nextCard = drawResults[currentIndex + 1];
+        // ✅ 大幅减少切换时的粒子
+        if (nextCard && nextCard.rarity === '★★★★★') {
+          spawnParticles(20, true);
+          triggerGoldenFlash();
+        } else if (nextCard && nextCard.rarity === '★★★★') {
+          spawnParticles(10, false);
+        }
+      }, 300);
     } else {
-      setShowMode('all-at-once');
       setShowResult(true);
       setIsRevealMode(false);
     }
   };
 
   const handleShowAll = () => {
-    setShowMode('all-at-once');
     setShowResult(true);
     setIsRevealMode(false);
   };
@@ -342,6 +356,7 @@ export default function GachaPage() {
     setShowResult(false);
     setDrawResults([]);
     setCurrentIndex(0);
+    setIsFlipping(false);
   };
 
   const handlePoolChange = (poolId) => {
@@ -364,7 +379,6 @@ export default function GachaPage() {
     };
   }, [isOpen]);
 
-  // ===== 渲染 =====
   return (
     <Layout title="祈愿 · 抽卡" description="水神之谕 · 祈愿系统">
       <div className={styles.gachaPage}>
@@ -462,7 +476,11 @@ export default function GachaPage() {
             {exclusiveCharacters.map(card => (
               <div key={card.id} className={styles.previewCard}>
                 <div className={styles.previewImg}>
-                  <img src={card.image} alt={card.name} />
+                  <img 
+                    src={card.image} 
+                    alt={card.name}
+                    style={{ objectPosition: card.imagePosition || 'center 30%' }}
+                  />
                 </div>
                 <div className={styles.previewName} style={{ color: card.rarity === '★★★★★' ? '#ffd700' : card.color }}>
                   {card.name}
@@ -478,44 +496,74 @@ export default function GachaPage() {
         <div className={styles.resultOverlay}>
           {isRevealMode && drawResults[currentIndex] && (
             <div className={styles.revealContainer} onClick={handleNext}>
+              {drawResults[currentIndex].rarity === '★★★★★' && (
+                <div className={styles.goldenBurst}></div>
+              )}
+              {drawResults[currentIndex].rarity === '★★★★' && (
+                <div className={styles.purpleBurst}></div>
+              )}
+              
               <div 
-                className={`${styles.revealCard} ${drawResults[currentIndex].rarity === '★★★★★' ? styles.revealFiveStar : ''}`}
+                className={`
+                  ${styles.revealCard}
+                  ${drawResults[currentIndex].rarity === '★★★★★' ? styles.revealFiveStar : ''}
+                  ${drawResults[currentIndex].rarity === '★★★★' ? styles.revealFourStar : ''}
+                  ${drawResults[currentIndex].rarity === '★★★' ? styles.revealThreeStar : ''}
+                  ${isFlipping ? styles.cardFlipping : ''}
+                `}
                 style={{ 
-                  borderColor: drawResults[currentIndex].rarity === '★★★★★' ? '#ffd700' : drawResults[currentIndex].color,
-                  boxShadow: drawResults[currentIndex].rarity === '★★★★★' 
-                    ? '0 0 100px rgba(255,215,0,0.6), 0 0 200px rgba(255,215,0,0.2)' 
-                    : `0 0 80px ${drawResults[currentIndex].color}50`
+                  borderColor: drawResults[currentIndex].rarity === '★★★★★' ? '#ffd700' 
+                    : drawResults[currentIndex].rarity === '★★★★' ? '#ab47bc' 
+                    : '#4fc3f7',
                 }}
               >
+                <div 
+                  className={styles.cardStars}
+                  style={{
+                    color: drawResults[currentIndex].rarity === '★★★★★' ? '#ffd700' 
+                      : drawResults[currentIndex].rarity === '★★★★' ? '#ab47bc' 
+                      : '#4fc3f7'
+                  }}
+                >
+                  {drawResults[currentIndex].rarity}
+                </div>
+                
                 <div className={styles.revealImage}>
                   <img 
                     key={drawResults[currentIndex].id}
                     src={drawResults[currentIndex].image} 
                     alt={drawResults[currentIndex].name}
+                    style={{
+                      objectPosition: drawResults[currentIndex].imagePosition || 'center 30%'
+                    }}
                   />
+                  <div className={styles.imageGradient}></div>
                 </div>
+                
                 <div className={styles.revealInfo}>
-                  <div className={styles.revealRarity}>
-                    {drawResults[currentIndex].rarity}
-                  </div>
                   <div className={styles.revealName}>
                     {drawResults[currentIndex].name}
                   </div>
                   <div className={styles.revealTitle}>
                     {drawResults[currentIndex].title}
                   </div>
-                  <div className={styles.revealDesc}>
-                    {drawResults[currentIndex].description}
-                  </div>
+                </div>
+                
+                <div className={styles.cardFooter}>
+                  ✦ 水神赐福 ✦
                 </div>
               </div>
+
               <div className={styles.revealFooter}>
                 <span className={styles.revealProgress}>
                   {currentIndex + 1} / {drawResults.length}
                 </span>
                 <span className={styles.revealHint}>点击继续</span>
                 {drawResults.length > 1 && (
-                  <button className={styles.showAllBtn} onClick={(e) => { e.stopPropagation(); handleShowAll(); }}>
+                  <button 
+                    className={styles.showAllBtn} 
+                    onClick={(e) => { e.stopPropagation(); handleShowAll(); }}
+                  >
                     全部展示
                   </button>
                 )}
@@ -556,7 +604,11 @@ export default function GachaPage() {
                     }}
                   >
                     <div className={styles.resultImage}>
-                      <img src={card.image} alt={card.name} />
+                      <img 
+                        src={card.image} 
+                        alt={card.name}
+                        style={{ objectPosition: card.imagePosition || 'center 30%' }}
+                      />
                     </div>
                     <div className={styles.resultName} style={{ color: card.rarity === '★★★★★' ? '#ffd700' : card.color }}>
                       {card.name}

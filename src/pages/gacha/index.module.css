@@ -238,6 +238,7 @@
   height: 32px;
   border-radius: 8px;
   object-fit: cover;
+  object-position: top;
   flex-shrink: 0;
 }
 
@@ -436,54 +437,170 @@
   to { opacity: 1; }
 }
 
-/* ===== 逐张展示 ===== */
+/* ===== 逐张展示容器 ===== */
 .revealContainer {
   display: flex;
   flex-direction: column;
   align-items: center;
   cursor: pointer;
-  animation: revealIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
   max-width: 90vw;
+  position: relative;
+  perspective: 1500px;
 }
 
-@keyframes revealIn {
-  0% { transform: scale(0.5) rotate(-10deg); opacity: 0; }
-  100% { transform: scale(1) rotate(0deg); opacity: 1; }
+/* ===== 五星光芒爆发（缩小） ===== */
+.goldenBurst {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 400px;
+  height: 400px;
+  margin: -200px 0 0 -200px;
+  background: radial-gradient(circle, rgba(255, 215, 0, 0.3) 0%, rgba(255, 215, 0, 0.05) 40%, transparent 70%);
+  border-radius: 50%;
+  animation: burstExpand 3s ease-out infinite;
+  pointer-events: none;
+  z-index: 0;
+  will-change: transform, opacity;
+  transform: translateZ(0);
+  backface-visibility: hidden;
 }
 
+@keyframes burstExpand {
+  0% { transform: scale(0.6) translateZ(0); opacity: 0; }
+  50% { transform: scale(1.05) translateZ(0); opacity: 0.8; }
+  100% { transform: scale(1.3) translateZ(0); opacity: 0; }
+}
+
+/* ===== 四星光芒爆发（缩小） ===== */
+.purpleBurst {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 340px;
+  height: 340px;
+  margin: -170px 0 0 -170px;
+  background: radial-gradient(circle, rgba(171, 71, 188, 0.25) 0%, rgba(171, 71, 188, 0.05) 40%, transparent 70%);
+  border-radius: 50%;
+  animation: burstExpand 3s ease-out infinite;
+  pointer-events: none;
+  z-index: 0;
+  will-change: transform, opacity;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+/* ===== 逐张展示卡片（缩小） ===== */
 .revealCard {
   background: linear-gradient(145deg, #0d1b2a, #1a3a5c);
   border: 3px solid;
-  border-radius: 28px;
-  padding: 2rem;
-  min-width: 320px;
-  max-width: 450px;
+  border-radius: 20px;
+  padding: 1rem;
+  min-width: 360px;
+  max-width: 560px;
   text-align: center;
-  transition: all 0.5s ease;
   position: relative;
   overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+  will-change: transform;
+  animation: cardFlipIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  z-index: 1;
 }
 
+@keyframes cardFlipIn {
+  0% { 
+    transform: rotateY(90deg) scale(0.85) translateZ(0); 
+    opacity: 0; 
+  }
+  100% { 
+    transform: rotateY(0deg) scale(1) translateZ(0); 
+    opacity: 1; 
+  }
+}
+
+.cardFlipping {
+  animation: cardFlipOut 0.3s ease-in forwards;
+}
+
+@keyframes cardFlipOut {
+  0% { 
+    transform: rotateY(0deg) scale(1) translateZ(0); 
+    opacity: 1; 
+  }
+  100% { 
+    transform: rotateY(-90deg) scale(0.85) translateZ(0); 
+    opacity: 0; 
+  }
+}
+
+/* ===== 五星光效 ===== */
 .revealFiveStar {
-  animation: fiveStarGlow 1.5s ease-in-out infinite;
+  animation: fiveStarGlow 3s ease-in-out infinite;
+  will-change: box-shadow;
 }
 
 @keyframes fiveStarGlow {
-  0%, 100% { box-shadow: 0 0 60px rgba(255,215,0,0.5), 0 0 120px rgba(255,215,0,0.2); }
-  50% { box-shadow: 0 0 100px rgba(255,215,0,0.8), 0 0 200px rgba(255,215,0,0.4); }
+  0%, 100% { 
+    box-shadow: 0 0 60px rgba(255,215,0,0.5), 0 0 120px rgba(255,215,0,0.2);
+  }
+  50% { 
+    box-shadow: 0 0 100px rgba(255,215,0,0.8), 0 0 180px rgba(255,215,0,0.4);
+  }
 }
 
+/* ===== 四星光效 ===== */
+.revealFourStar {
+  animation: fourStarGlow 3s ease-in-out infinite;
+  will-change: box-shadow;
+}
+
+@keyframes fourStarGlow {
+  0%, 100% { 
+    box-shadow: 0 0 40px rgba(171,71,188,0.5), 0 0 80px rgba(171,71,188,0.2);
+  }
+  50% { 
+    box-shadow: 0 0 70px rgba(171,71,188,0.8), 0 0 130px rgba(171,71,188,0.4);
+  }
+}
+
+/* ===== 三星光效 ===== */
+.revealThreeStar {
+  box-shadow: 0 0 30px rgba(79,195,247,0.4);
+}
+
+/* ===== 顶部稀有度星星 ===== */
+.cardStars {
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.9rem;
+  letter-spacing: 4px;
+  z-index: 2;
+  text-shadow: 0 0 20px currentColor;
+  animation: starsTwinkle 2s ease-in-out infinite;
+}
+
+@keyframes starsTwinkle {
+  0%, 100% { opacity: 0.7; transform: translateX(-50%) scale(1); }
+  50% { opacity: 1; transform: translateX(-50%) scale(1.05); }
+}
+
+/* ===== 逐张展示图片（缩小，保持 16:9） ===== */
 .revealImage {
   width: 100%;
-  aspect-ratio: 3/4;
-  max-height: 350px;
-  border-radius: 20px;
+  aspect-ratio: 16/9;
+  max-height: 240px;
+  border-radius: 12px;
   overflow: hidden;
   background: linear-gradient(135deg, #1a2a3a, #0d1b2a);
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 1rem;
+  margin-bottom: 0.6rem;
+  margin-top: 1rem;
   position: relative;
 }
 
@@ -491,65 +608,74 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: top;
+  object-position: center 30%;
+  image-rendering: -webkit-optimize-contrast;
+  backface-visibility: hidden;
 }
 
+.imageGradient {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 40%;
+  background: linear-gradient(to top, rgba(13, 27, 42, 0.9) 0%, transparent 100%);
+  pointer-events: none;
+}
+
+/* ===== 角色信息（缩小） ===== */
 .revealInfo {
   position: relative;
   z-index: 1;
-}
-
-.revealRarity {
-  font-size: 0.85rem;
-  color: #ffd700;
-  letter-spacing: 3px;
-  margin-bottom: 0.3rem;
+  padding: 0.3rem 0;
 }
 
 .revealName {
-  font-size: 2rem;
+  font-size: 1.4rem;
   font-weight: 700;
   color: #ffd700;
   text-shadow: 0 0 40px rgba(255, 215, 0, 0.5);
-  margin-bottom: 0.2rem;
+  margin-bottom: 0.15rem;
+  letter-spacing: 2px;
 }
 
 .revealTitle {
-  font-size: 0.95rem;
+  font-size: 0.8rem;
   color: #81d4fa;
   letter-spacing: 2px;
-  margin-bottom: 0.8rem;
 }
 
-.revealDesc {
-  font-size: 0.85rem;
-  color: #b3e5fc;
-  font-style: italic;
-  line-height: 1.6;
-  padding: 0.8rem 0;
-  border-top: 1px solid rgba(255, 215, 0, 0.15);
-  border-bottom: 1px solid rgba(255, 215, 0, 0.15);
+/* ===== 卡片底部装饰 ===== */
+.cardFooter {
+  margin-top: 0.4rem;
+  font-size: 0.6rem;
+  color: rgba(255, 215, 0, 0.4);
+  letter-spacing: 6px;
+  font-weight: 300;
 }
 
+/* ===== 底部提示 ===== */
 .revealFooter {
   display: flex;
   align-items: center;
   gap: 1rem;
-  margin-top: 1.5rem;
+  margin-top: 1rem;
   flex-wrap: wrap;
   justify-content: center;
+  position: relative;
+  z-index: 1;
 }
 
 .revealProgress {
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   color: #ffd700;
   font-weight: 600;
 }
 
 .revealHint {
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   color: rgba(255, 215, 0, 0.6);
-  animation: hintPulse 1.5s ease-in-out infinite;
+  animation: hintPulse 2s ease-in-out infinite;
 }
 
 @keyframes hintPulse {
@@ -558,13 +684,13 @@
 }
 
 .showAllBtn {
-  padding: 0.5rem 1.5rem;
+  padding: 0.4rem 1.2rem;
   border-radius: 30px;
   border: 1px solid rgba(255, 215, 0, 0.4);
   background: rgba(255, 215, 0, 0.1);
   color: #ffd700;
   cursor: pointer;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   transition: all 0.3s ease;
 }
 
@@ -573,14 +699,14 @@
   border-color: #ffd700;
 }
 
-/* ===== 一起展示 ===== */
+/* ===== 一起展示（缩小版） ===== */
 .resultContainer {
-  max-width: 1000px;
+  max-width: 1100px;
   width: 100%;
   max-height: 90vh;
   overflow-y: auto;
   animation: resultIn 0.6s ease;
-  padding: 1rem;
+  padding: 1.2rem;
 }
 
 @keyframes resultIn {
@@ -590,11 +716,11 @@
 
 .resultHeader {
   text-align: center;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1.2rem;
 }
 
 .resultTitle {
-  font-size: 1.8rem;
+  font-size: 1.5rem;
   color: #ffd700;
   letter-spacing: 4px;
   margin-bottom: 0.5rem;
@@ -605,22 +731,24 @@
   display: flex;
   justify-content: center;
   gap: 1.5rem;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
 }
 
 .star5Count { color: #ffd700; }
 .star4Count { color: #ab47bc; }
 .star3Count { color: #4fc3f7; }
 
+/* ✅ 4 列缩小版 */
 .resultGrid {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 0.8rem;
-  margin-bottom: 1.5rem;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+  margin-bottom: 1.2rem;
 }
 
+/* ✅ 单抽时单列小卡 */
 .resultGridSingle {
-  grid-template-columns: minmax(200px, 300px);
+  grid-template-columns: minmax(380px, 560px);
   justify-content: center;
 }
 
@@ -628,10 +756,11 @@
   text-align: center;
   padding: 0.6rem;
   background: rgba(255, 255, 255, 0.03);
-  border-radius: 14px;
+  border-radius: 12px;
   border: 2px solid;
   animation: cardAppear 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) backwards;
-  transition: all 0.3s ease;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  will-change: transform;
 }
 
 @keyframes cardAppear {
@@ -640,7 +769,7 @@
 }
 
 .resultFiveStar {
-  animation: resultFiveStar 1.5s ease-in-out infinite;
+  animation: resultFiveStar 2s ease-in-out infinite;
 }
 
 @keyframes resultFiveStar {
@@ -648,10 +777,11 @@
   50% { box-shadow: 0 0 50px rgba(255,215,0,0.8); }
 }
 
+/* ✅ 图片容器 16:9 比例，缩小 */
 .resultImage {
   width: 100%;
-  aspect-ratio: 3/4;
-  border-radius: 10px;
+  aspect-ratio: 16/9;
+  border-radius: 8px;
   overflow: hidden;
   background: linear-gradient(135deg, #1a2a3a, #0d1b2a);
   display: flex;
@@ -664,30 +794,32 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: top;
+  object-position: center 30%;
+  backface-visibility: hidden;
 }
 
+/* ✅ 名字缩小 */
 .resultName {
-  font-size: 0.8rem;
+  font-size: 0.85rem;
   font-weight: 600;
   margin-bottom: 0.1rem;
 }
 
 .resultRarity {
-  font-size: 0.6rem;
+  font-size: 0.7rem;
   color: #ffd700;
-  opacity: 0.7;
+  opacity: 0.8;
 }
 
 .closeResultBtn {
   display: block;
   margin: 0 auto;
-  padding: 0.8rem 3rem;
+  padding: 0.7rem 2.5rem;
   border-radius: 30px;
   border: 1px solid rgba(255, 215, 0, 0.4);
   background: rgba(255, 215, 0, 0.1);
   color: #ffd700;
-  font-size: 1rem;
+  font-size: 0.95rem;
   cursor: pointer;
   transition: all 0.3s ease;
   letter-spacing: 2px;
@@ -717,28 +849,45 @@
   }
   
   .resultGrid {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.8rem;
   }
   
   .resultGridSingle {
-    grid-template-columns: minmax(180px, 250px);
+    grid-template-columns: minmax(260px, 420px);
+  }
+  
+  .resultName {
+    font-size: 0.75rem;
   }
   
   .revealCard {
-    min-width: 260px;
-    padding: 1.5rem;
+    min-width: 280px;
+    padding: 0.8rem;
   }
   
   .revealImage {
-    max-height: 250px;
+    max-height: 180px;
   }
   
   .revealName {
-    font-size: 1.5rem;
+    font-size: 1.2rem;
   }
   
   .previewGrid {
     grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+  }
+  
+  .goldenBurst {
+    width: 300px;
+    height: 300px;
+    margin: -150px 0 0 -150px;
+  }
+  
+  .purpleBurst {
+    width: 260px;
+    height: 260px;
+    margin: -130px 0 0 -130px;
   }
 }
 
@@ -756,22 +905,43 @@
   
   .resultGrid {
     grid-template-columns: repeat(2, 1fr);
+    gap: 0.6rem;
   }
   
   .resultGridSingle {
-    grid-template-columns: minmax(150px, 200px);
+    grid-template-columns: minmax(220px, 340px);
+  }
+  
+  .resultName {
+    font-size: 0.7rem;
+  }
+  
+  .resultRarity {
+    font-size: 0.6rem;
   }
   
   .revealCard {
     min-width: 240px;
-    padding: 1.2rem;
+    padding: 0.6rem;
+  }
+  
+  .revealImage {
+    max-height: 140px;
   }
   
   .revealName {
-    font-size: 1.3rem;
+    font-size: 1rem;
   }
   
-  .revealDesc {
-    font-size: 0.8rem;
+  .goldenBurst {
+    width: 220px;
+    height: 220px;
+    margin: -110px 0 0 -110px;
+  }
+  
+  .purpleBurst {
+    width: 180px;
+    height: 180px;
+    margin: -90px 0 0 -90px;
   }
 }
