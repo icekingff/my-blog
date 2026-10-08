@@ -448,7 +448,7 @@
   perspective: 1500px;
 }
 
-/* ===== 五星光芒爆发（缩小） ===== */
+/* ===== 五星光芒爆发 ===== */
 .goldenBurst {
   position: absolute;
   top: 50%;
@@ -472,7 +472,7 @@
   100% { transform: scale(1.3) translateZ(0); opacity: 0; }
 }
 
-/* ===== 四星光芒爆发（缩小） ===== */
+/* ===== 四星光芒爆发 ===== */
 .purpleBurst {
   position: absolute;
   top: 50%;
@@ -490,7 +490,7 @@
   backface-visibility: hidden;
 }
 
-/* ===== 逐张展示卡片（缩小） ===== */
+/* ===== 逐张展示卡片 ===== */
 .revealCard {
   background: linear-gradient(145deg, #0d1b2a, #1a3a5c);
   border: 3px solid;
@@ -588,7 +588,7 @@
   50% { opacity: 1; transform: translateX(-50%) scale(1.05); }
 }
 
-/* ===== 逐张展示图片（缩小，保持 16:9） ===== */
+/* ===== 逐张展示图片 ===== */
 .revealImage {
   width: 100%;
   aspect-ratio: 16/9;
@@ -623,7 +623,7 @@
   pointer-events: none;
 }
 
-/* ===== 角色信息（缩小） ===== */
+/* ===== 角色信息 ===== */
 .revealInfo {
   position: relative;
   z-index: 1;
@@ -699,10 +699,10 @@
   border-color: #ffd700;
 }
 
-/* ===== 一起展示（缩小版） ===== */
+/* ===== ✅ 全部展示（10 张横排一行） ===== */
 .resultContainer {
-  max-width: 1100px;
-  width: 100%;
+  max-width: 100vw;               /* ✅ 占满全屏宽度 */
+  width: 95vw;
   max-height: 90vh;
   overflow-y: auto;
   animation: resultIn 0.6s ease;
@@ -738,29 +738,36 @@
 .star4Count { color: #ab47bc; }
 .star3Count { color: #4fc3f7; }
 
-/* ✅ 4 列缩小版 */
+/* ✅ 10 张横排一行 */
 .resultGrid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 1rem;
+  grid-template-columns: repeat(10, 1fr);   /* ✅ 10 列 */
+  gap: 0.6rem;                              /* ✅ 小间距 */
   margin-bottom: 1.2rem;
 }
 
-/* ✅ 单抽时单列小卡 */
+/* ✅ 单抽时只显示一张居中 */
 .resultGridSingle {
-  grid-template-columns: minmax(380px, 560px);
+  grid-template-columns: minmax(200px, 260px);
   justify-content: center;
 }
 
 .resultCard {
+  display: flex;
+  flex-direction: column;
   text-align: center;
-  padding: 0.6rem;
+  padding: 0.4rem;                          /* ✅ 缩小内边距 */
   background: rgba(255, 255, 255, 0.03);
-  border-radius: 12px;
+  border-radius: 10px;
   border: 2px solid;
   animation: cardAppear 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) backwards;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   will-change: transform;
+}
+
+.resultCard:hover {
+  transform: translateY(-6px) scale(1.05);
+  z-index: 10;
 }
 
 @keyframes cardAppear {
@@ -777,36 +784,39 @@
   50% { box-shadow: 0 0 50px rgba(255,215,0,0.8); }
 }
 
-/* ✅ 图片容器 16:9 比例，缩小 */
+/* ✅ 竖版图片容器（3:4 比例） */
 .resultImage {
   width: 100%;
-  aspect-ratio: 16/9;
-  border-radius: 8px;
+  aspect-ratio: 3/4;                        /* ✅ 竖版比例 */
+  border-radius: 6px;
   overflow: hidden;
   background: linear-gradient(135deg, #1a2a3a, #0d1b2a);
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 0.4rem;
+  margin-bottom: 0.3rem;
 }
 
 .resultImage img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: center 30%;
+  object-position: center top;              /* ✅ 显示头部和上半身 */
   backface-visibility: hidden;
 }
 
 /* ✅ 名字缩小 */
 .resultName {
-  font-size: 0.85rem;
+  font-size: 0.7rem;
   font-weight: 600;
   margin-bottom: 0.1rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .resultRarity {
-  font-size: 0.7rem;
+  font-size: 0.55rem;
   color: #ffd700;
   opacity: 0.8;
 }
@@ -832,6 +842,30 @@
 }
 
 /* ===== 响应式 ===== */
+@media (max-width: 1200px) {
+  /* 平板横屏：8 张一行 */
+  .resultGrid {
+    grid-template-columns: repeat(8, 1fr);
+    gap: 0.5rem;
+  }
+}
+
+@media (max-width: 900px) {
+  /* 平板竖屏：5 张一行 */
+  .resultGrid {
+    grid-template-columns: repeat(5, 1fr);
+    gap: 0.5rem;
+  }
+  
+  .resultName {
+    font-size: 0.65rem;
+  }
+  
+  .resultRarity {
+    font-size: 0.5rem;
+  }
+}
+
 @media (max-width: 768px) {
   .title { font-size: 2rem; }
   .subtitle { font-size: 0.9rem; }
@@ -849,16 +883,16 @@
   }
   
   .resultGrid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 0.8rem;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.4rem;
   }
   
   .resultGridSingle {
-    grid-template-columns: minmax(260px, 420px);
+    grid-template-columns: minmax(180px, 220px);
   }
   
   .resultName {
-    font-size: 0.75rem;
+    font-size: 0.6rem;
   }
   
   .revealCard {
@@ -903,21 +937,26 @@
     font-size: 0.85rem;
   }
   
+  /* 手机：3 张一行 */
   .resultGrid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 0.6rem;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.4rem;
   }
   
   .resultGridSingle {
-    grid-template-columns: minmax(220px, 340px);
+    grid-template-columns: minmax(160px, 200px);
   }
   
   .resultName {
-    font-size: 0.7rem;
+    font-size: 0.55rem;
   }
   
   .resultRarity {
-    font-size: 0.6rem;
+    font-size: 0.45rem;
+  }
+  
+  .resultCard {
+    padding: 0.25rem;
   }
   
   .revealCard {

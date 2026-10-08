@@ -5,10 +5,10 @@ import styles from './index.module.css';
 // ===== 角色库 =====
 const ALL_CHARACTERS = [
   { id: 1, name: '芙宁娜', title: '水神 · 审判', image: '/img/characters/furina.png', imagePosition: 'center 30%', rarity: '★★★★★', color: '#ffd700', description: '"罪人舞步旋，水神之审判永不停歇。"', isPermanent: true },
-  { id: 3, name: '琳妮特', title: '魔术助手', image: '/img/characters/lynette.png', imagePosition: 'center 25%', rarity: '★★★★', color: '#81d4fa', description: '"魔术的精髓在于优雅。"', isPermanent: true },
-  { id: 4, name: '菲米尼', title: '潜水员', image: '/img/characters/freminet.png', imagePosition: 'center 25%', rarity: '★★★★', color: '#80cbc4', description: '"海露的深处，藏着秘密。"', isPermanent: true },
+  { id: 3, name: '琳妮特', title: '魔术助手', image: '/img/characters/linnite.png', imagePosition: 'center 25%', rarity: '★★★★', color: '#81d4fa', description: '"魔术的精髓在于优雅。"', isPermanent: true },
+  { id: 4, name: '菲米尼', title: '潜水员', image: '/img/characters/fimini.png', imagePosition: 'center 25%', rarity: '★★★★', color: '#80cbc4', description: '"海露的深处，藏着秘密。"', isPermanent: true },
   { id: 6, name: '克洛琳德', title: '决斗代理人', image: '/img/characters/clorinde.png', imagePosition: 'center 25%', rarity: '★★★★', color: '#a1887f', description: '"决斗的规则，由我来定。"', isPermanent: true },
-  { id: 8, name: '史莱姆', title: '普通怪物', image: '/img/characters/slime.png', imagePosition: 'center 50%', rarity: '★★★', color: '#3e2723', description: '"！？区区？！"', isPermanent: true },
+  { id: 8, name: '史莱姆', title: '普通怪物', image: '/img/characters/shi.png', imagePosition: 'center 50%', rarity: '★★★', color: '#3e2723', description: '"！？区区？！"', isPermanent: true },
   { id: 9, name: '钟离', title: '岩神 · 契约', image: '/img/characters/zhongli.png', imagePosition: 'center 30%', rarity: '★★★★★', color: '#ffb300', description: '"我虽无意逐鹿，却知苍生苦楚。"', isPermanent: false },
   { id: 10, name: '胡桃', title: '往生堂 · 堂主', image: '/img/characters/hutao.png', imagePosition: 'center 20%', rarity: '★★★★★', color: '#ff6b6b', description: '"客官，往生堂了解一下？"', isPermanent: false },
   { id: 11, name: '甘雨', title: '璃月·七星秘书', image: '/img/characters/ganyu.png', imagePosition: 'center 25%', rarity: '★★★★★', color: '#66bb6a', description: '"为了璃月，我愿意付出一切。"', isPermanent: false },
@@ -19,7 +19,7 @@ const ALL_CHARACTERS = [
 
 const POOLS = [
   { id: 'pool_liyue', name: '璃月祈愿', fiveStarIds: [9, 10, 11, 14], fourStarIds: [12, 13] },
-  { id: 'pool_fontaine', name: '枫丹祈愿', fiveStarIds: [], fourStarIds: [] },
+  { id: 'pool_fontaine', name: '枫丹祈愿', fiveStarIds: [], fourStarIds: [3,4] },
 ];
 
 const getCharacterById = (id) => ALL_CHARACTERS.find(c => c.id === id);
