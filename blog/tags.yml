@@ -142,3 +142,9 @@ ARC:
 
 树上启发式合并:
   label: '树上启发式合并'
+
+Codeforces:
+  label: 'Codeforces'
+
+对偶优化:
+  label: '对偶优化'
