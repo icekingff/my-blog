@@ -151,3 +151,9 @@ Codeforces:
 
 自测题:
   label: '自测题'
+
+总结:
+  label: '总结'
+
+连续段DP:
+  label: '连续段DP'
