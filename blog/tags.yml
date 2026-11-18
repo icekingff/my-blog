@@ -157,3 +157,12 @@ Codeforces:
 
 连续段DP:
   label: '连续段DP'
+
+树状树组:
+  label: '树状树组'
+
+单调栈:
+  label: '单调栈'
+
+扫描线:
+  label: '扫描线'
